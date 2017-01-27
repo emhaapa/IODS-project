@@ -2,4 +2,4 @@
 title: "General"
 output: html_document
 ---
-During the course we will use GitHub and RStudio along with R in working with the course excercises. The course seems very useful and interesting, and I'm glad to be taking part in it this spring. You can find the link to my course diary here. <https://emhaapa.github.io/IODS-project/>
+During the course we will use GitHub and RStudio along with R in working with the course exercises. The course seems very useful and interesting, and I'm glad to be taking part in it this spring. You can find the link to my course diary here. <https://emhaapa.github.io/IODS-project/>
