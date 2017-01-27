@@ -9,5 +9,6 @@ The course is an introduction course to open data science for statisticians. It 
 
 The programs used will be introduced by various tasks and homework assignments, in other words, the course consists of different exercises to be done at home or in a specific tutoring class. After completion, the exercises are to be peer-reviewed by other course members and thus the students will be learning from other participants' work as well as from their own contribution to working with the exercises during the week.
 
-The link to my GitHub repository:
+The link to [my GitHub repository](https://github.com/emhaapa/IODS-project):
+
 <https://github.com/emhaapa/IODS-project>.
