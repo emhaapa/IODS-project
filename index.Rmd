@@ -3,7 +3,7 @@ title: "IODS course project"
 author: "Emma Haapa"
 output:
   html_document:
-    theme: yeti
+    theme: sandstone
     toc: true
     toc_depth: 2
     fig_caption: true

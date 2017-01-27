@@ -5,7 +5,9 @@ output: html_document
 ---
 # About the course {#anchor} 
 
-The course is an introduction course to open data science for statisticians. It is a course for coding and programming to analyze and interpret data that otherwise would be just numbers and tables, with a goal in learning R and other tools to accomplish these tasks. The course consists of different excercises to be done at home or in a specific tutoring class.
+The course is an introduction course to open data science for statisticians. It is a course for coding and programming to analyze and interpret data that otherwise would be just numbers and tables, with a goal in learning R and other tools to accomplish these tasks. 
+
+The programs used will be introduced by various tasks and homework assignments, in other words, the course consists of different excercises to be done at home or in a specific tutoring class. After completion, the excercises are to be peer-reviewed by other course members and thus the students will be learning from other participants' work as well as from their own contribution to the excercises during the week.
 
 The link to my GitHub repository:
-<https://github.com/emhaapa/IODS-project>
+<https://github.com/emhaapa/IODS-project>.
