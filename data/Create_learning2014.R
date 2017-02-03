@@ -11,15 +11,15 @@ dim(learning14)
 str(learning14)
 # The str-function also states that there are 183 observations and 60 variables in the data. The variables are coded as combinations of letters that refer to the statement or question as a variable.
 
-library(dplyr) #accessed tge dplyr-library
+library(dplyr) #accessed the dplyr-library
 
-# print the "Attitude" column vector of the lrn14 data
+# Printing the "Attitude" column vector of the lrn14 data
 learning14$Attitude
 
-# divide each number in the column vector
+# Dividing each number in the column vector
 learning14$Attitude / 10
 
-# create column 'attitude' by scaling the column "Attitude"
+# Creating column 'attitude' by scaling the column "Attitude"
 learning14$attitude <- learning14$Attitude / 10
 
 
@@ -36,17 +36,17 @@ learning14$deep <- rowMeans(deep_columns)
 surface_columns <- select(learning14, one_of(surface_questions))
 learning14$surf <- rowMeans(surface_columns)
 
-#  Selecting columns that have to do with strategic learning and creating a column stra by averaging.
+# Selecting columns that have to do with strategic learning and creating a column stra by averaging.
 strategic_columns <- select(learning14, one_of(strategic_questions))
 learning14$stra <- rowMeans(strategic_columns)
 
 # choose a handful of columns to keep
 keep_columns <- c("gender","Age","attitude", "deep", "stra", "surf", "Points")
 
-# select the 'keep_columns' to create a new dataset
+# Selecting the 'keep_columns' to create a new dataset
 learning2014 <- select(learning14, one_of(keep_columns))
 
-# print out the column names of the data
+# Printing out the column names of the data
 colnames(learning2014)
 
 # change the name of the second column
