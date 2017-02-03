@@ -182,7 +182,10 @@ my_model3 <- lm(attitude ~ deep, data = learning2014)
 summary(my_model3)
 ```
 
-The statistical test related to the parameters is a test for the null-hypothesis, that the beta-parameter in the regression model is actually zero. The p-value indicates the probability of that happening, using this statistical model. 
+
+The statistical test related to the parameters is a test for the null-hypothesis, that the beta-parameter in the regression model is actually zero. The p-value indicates the probability of that happening, using this statistical model. The influence of an explanatory variable is statistically significant, if it (in general) is <0,05. The highest value the p-value could take to be statistically at least somewhat significant, is 0,1.
+
+In the above summary-tables, the p-values are for attitude 4.12e-09, which is extremely good, and strictly less than 0,001 which is the best of the signifigance levels. So the influence of attitude to points seems to be significant, and reading from the table, the first estimate, i.e. the beta-parameter, is 3,5255 which indicates a strong positive influence on points. So a good attitude correlates with good points, simply said. The p-value for deep is 0.897, which is not at all a good p-value - it is significantly greater than 0,1, so the influence of deep on points cannot be considered statistically significant. For stra, the p-value is 0.0603, which is pretty good - it is close to 0,05 and definitely less than 0,1.
 
 Attempting to find variables that have statistically significant relationships with the points-variable, I tried many options, one of which was the combination of the variables 'deep', 'stra', and 'surf' as the explanatory variables, which gave puzzling results. 
 
@@ -251,6 +254,29 @@ In general, the higher the R-squared, the better.
 Taking into consideration this notion, the multiple R-squared is not very high in either of the latter cases: for the three variable-regression it is 0,2048 or 20,48% and for the two-variable-regression slightly bigger, 0.2074 or 20,74%. Concluding from that, the model fits a little better when there are only two explanatory variables, 'attitude' and 'stra', than if 'surf' were added to the model.
 Using a summary of your fitted model, explain the relationship between the chosen explanatory variables and the target variable (interpret the model parameters). Explain and interpret the multiple R squared of the model.
 
+### Graphical model validation
+
+```{r, echo=TRUE}
+# create a regression model with multiple explanatory variables
+my_model4 <- lm(points ~ attitude + stra, data = learning2014)
+
+# draw diagnostic plots using the plot() function. Choose the plots 1, 2 and 5
+par(mfrow = c(2,2))
+plot(my_model4, which=c(1,2,5))
+```
+
+
+
+In linear regression the assumptions include that the target variable is assumed to be a linear combination of the explanatory variables - i. e. the fisrt big assumption associated with a linear model is linearity. Generally, it is useful to assume also, that the errors are normally distributed and moreover, with a mean of 0 and a constant variance. This includes also the notion that the errors are not correlated and that the size of an error does not depend on the explanatory variables. There are a number of graphical ways to explore these assumptions, for example:
+
+### The Normal QQ-plot
+
+The Normal QQ-plot is a plot of the residuals that can be used to explore the assumption of the normality of the errors in the model. In the Normal QQ-plot of the model in question, the points of the plot seem to fall pretty nicely on the curve, and nothing seems to deviate out of the line. Consequently, according to this graphical model validation plot, the model's errors are (at least close to being) normally distributed and the normality assumption is correct.
+
+### 
+
+
+Produce the following diagnostic plots: Residuals vs Fitted values, Normal QQ-plot and Residuals vs Leverage. Explain the assumptions of the model and interpret the validity of those assumptions based on the diagnostic plots. 
 
 "gender","Age","attitude", "deep", "stra", "surf", "Points"
 *Describe the work you have done this week and summarize your learning.*
