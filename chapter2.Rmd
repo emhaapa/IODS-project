@@ -262,25 +262,25 @@ my_model4 <- lm(points ~ attitude + stra, data = learning2014)
 
 # draw diagnostic plots using the plot() function. Choose the plots 1, 2 and 5
 par(mfrow = c(2,2))
-plot(my_model4, which=c(1,2,5))
+plot(my_model4, which=c(2,5,1))
 ```
 
 
 
 In linear regression the assumptions include that the target variable is assumed to be a linear combination of the explanatory variables - i. e. the fisrt big assumption associated with a linear model is linearity. Generally, it is useful to assume also, that the errors are normally distributed and moreover, with a mean of 0 and a constant variance. This includes also the notion that the errors are not correlated and that the size of an error does not depend on the explanatory variables. There are a number of graphical ways to explore these assumptions, for example:
 
+
+### The Residuals vs. Fitted values -plot
+
+The Residuals vs. Fitted values -plot explores the constant variance assumption of the errors in the model, in other words the assumption that there should be no or close to none dependency between the errors and the explanatory variables. The simple plot shows residuals and model predictions, and if there seems to be any pattern in the plot, one could conclude that there is some dependency and the variance of the errors is not constant. 
+
+In the plot of the model, the points seem to be distributed quite randomly, and no actual pattern can really be seen. The curve fitted to these points is also rather vertical, with no deviation or slope differing from 1, so it is a good sign that there is no dependency of the errors on the explanatory variables. In this case, I would say that the variance seems to be constant, and this assumption of the linear model holds true.
+
 ### The Normal QQ-plot
 
 The Normal QQ-plot is a plot of the residuals that can be used to explore the assumption of the normality of the errors in the model. In the Normal QQ-plot of the model in question, the points of the plot seem to fall pretty nicely on the curve, and nothing seems to deviate out of the line. Consequently, according to this graphical model validation plot, the model's errors are (at least close to being) normally distributed and the normality assumption is correct.
 
-### 
+### The Residual vs. Leverage -plot
 
+The Residueal vs. Leverage -plot measures, how much impact a signle observation has on the model. By analyzing the plot, any observations that have a high impact on the model, can be identified. The model of the two explanatory variables affecting the points-variable, we can see that the scale of the Leverage-plot is not very wide - only from 0 to 0,05. This indicates, that no observation is stranded outside the plot, and if there are observations in the fringes of the plot, the distance to other observations is not so big. Also, all the observations seem to fall in the plot quite evenly, which in itself indicates that there are no single observations having unusually high impact on the model. So the linearity assumption can be said to be correct in this model.
 
-Produce the following diagnostic plots: Residuals vs Fitted values, Normal QQ-plot and Residuals vs Leverage. Explain the assumptions of the model and interpret the validity of those assumptions based on the diagnostic plots. 
-
-"gender","Age","attitude", "deep", "stra", "surf", "Points"
-*Describe the work you have done this week and summarize your learning.*
-
-- Describe your work and results clearly. 
-- Assume the reader has an introductory course level understanding of writing and reading R code as well as statistical methods
-- Assume the reader has no previous knowledge of your data or the more advanced methods you are using  
