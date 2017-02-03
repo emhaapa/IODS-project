@@ -1,4 +1,202 @@
-# Insert chapter 2 title here
+---
+title: 'Course: Introduction to open data science'
+author: "Emma Haapa"
+---
+c
+
+# Week 2: Regression and model validation {#anchor}
+
+The [data](http://www.helsinki.fi/~kvehkala/JYTmooc/JYTOPKYS3-data.txt) we wrangled and analyzed this week is called JYTOPKYS3 by Kimmo Vehkalahti, which I named "learning14" for the course of the initial wrangling assignments. The number of observations in the data is 183 and there are in total 66 variables.
+
+The variables, essentially the statements or questions in the questionnaire, are coded in short sections of letters and numbers, for example "SU08" = "I tend to read very little beyond what is actually required to pass", "D06" = "I look at the evidence carefully and try to reach my own conclusion about what I'm studying" and "ST01" = "I manage to find conditions for studying which allow me to get on with my work easily", the initials of which in turn correspond to their function in measuring the student's deep, surface or strategic inclination towards learning. In other words, the combinations of variables are meters which measure the dimensions of deep, strategic and surface learning. 
+
+There are also background variables in the data, such as "gender" and "age", and variables that measure more general things associated with learning, succeeding in the learning process and how much time the student spends studying. The study was conducted in 2014 as an international study project with funding from Opettajien Akatemia (see this [link](http://www.helsinki.fi/~kvehkala/JYTmooc/JYTOPKYS3-meta.txt) for further clarification].
+
+For the assignment this week, the data was wrangled, so that the dimensions of the data were taken into consideration when the data was formed into columns (deep, surf, str) from all the variables associated with them and averaging by the number of questions. Also the variables 'gender', 'points' and 'attitude' were taken into the formed data set "learning2014". Also, in the data wrangling part of the exercise, the observations in which the variable "points" got the value 0, were excluded from the data, leaving only 166 observations out of the initial 183 in the final data. The dimensions of the data set were then accordingly:
+
+The structure of the data can be further explored by using the str()- and head()-functions in R.
+
+```{r First chunk, include=FALSE}
+
+learning14 <- read.table("http://www.helsinki.fi/~kvehkala/JYTmooc/JYTOPKYS3-data.txt", sep="\t", header=TRUE)
+
+library(dplyr) #accessed tge dplyr-library
+
+learning14$Attitude
+learning14$Attitude / 10
+learning14$attitude <- learning14$Attitude / 10
+
+
+# Creating objects that refer to all the questions that assess different types of learning: deep, surface and strategic learning.
+deep_questions <- c("D03", "D11", "D19", "D27", "D07", "D14", "D22", "D30","D06",  "D15", "D23", "D31")
+surface_questions <- c("SU02","SU10","SU18","SU26", "SU05","SU13","SU21","SU29","SU08","SU16","SU24","SU32")
+strategic_questions <- c("ST01","ST09","ST17","ST25","ST04","ST12","ST20","ST28")
+
+# Selecting columns that have to do with deep learning and creating a column deep by averaging.
+deep_columns <- select(learning14, one_of(deep_questions))
+learning14$deep <- rowMeans(deep_columns)
+
+# Selecting columns that have to do with surface learning and creating a column surf by averaging.
+surface_columns <- select(learning14, one_of(surface_questions))
+learning14$surf <- rowMeans(surface_columns)
+
+# Selecting columns that have to do with strategic learning and creating a column stra by averaging.
+strategic_columns <- select(learning14, one_of(strategic_questions))
+learning14$stra <- rowMeans(strategic_columns)
+
+keep_columns <- c("gender","Age","attitude", "deep", "stra", "surf", "Points")
+
+# Creating a new data set
+learning2014 <- select(learning14, one_of(keep_columns))
+
+# Changing the names of the columns
+
+colnames(learning2014)[2] <- "age"
+colnames(learning2014)[7] <- "points"
+
+# Selecting the rows where points is greater than zero
+learning2014 <- filter(learning2014, points > 0)
+```
+
+```{r chunk2, echo=TRUE}
+str(learning2014)
+head(learning2014)
+
+```
+
+of which the first shows that the variables 'age' and 'points' only get integer values, whereas 'attitude', 'deep', 'stra' and 'surf' get numerical values. The gender variable is a 2-level factor, with the values 1 or 2, 1 being "F" or 'female' and 2 being "M" or 'male'. The latter, in turn, shows the first parts of the vectors in the data, in this case, the first 6 observations, in detail (all of the variables' values of this observation).
+
+##### The relationships between the variables 
+
+First, as an example, I will follow the idea in the DataCamp exercise and draw a plot of attitude versus exam points with gender specifying the plots. Also a regression line is added to the plots, one for both genders (if gender is male, the line is blue and if female, the line is red.) The regression line is fitted using the least squares approach.
+
+```{r Codecunk3, include=FALSE}
+options(max.print=1000000)
+learning2014 <- read.table(file = "learning2014.txt")
+
+library(dplyr) #accessed the dplyr-library
+library(ggplot2) #accessed the ggplot2-library
+```
+
+```{r Codechunk4, echo=FALSE}
+p1 <- ggplot(learning2014, aes(x = attitude, y = points, col =gender))
+
+# define the visualization type (points)
+p2 <- p1 + geom_point()
+
+# add a regression line
+p3 <- p2 + geom_smooth(method = "lm")
+
+# add a main title and draw the plot
+p4 <- p3 + ggtitle("Student's attitude versus exam points")
+p4
+```
+
+
+I attempted to make a similar scatter plot out of two other variables in the learning2014 data, for learning's sake. I decided to choose variables "deep" and "points", to see if the student's deep leaning skills are in some kind of connection or loosely said, correlation, with each other.
+
+```{r Codechunk5, echo=FALSE}
+
+p11 <- ggplot(learning2014, aes(x = deep, y = points, col =gender))
+
+# define the visualization type (points)
+p22 <- p1 + geom_point()
+
+# add a regression line
+p33 <- p2 + geom_smooth(method = "lm")
+
+# add a main title and draw the plot
+p44 <- p3 + ggtitle("Student's deep learning skills versus exam points")
+p44
+
+```
+
+
+As can be seen from the scatter plot and the linear regression curve fitted into it, there seems to be less connection between a student's deep learning skills and their points earned in an exam, as the regression line is practically vertical.
+From this I got the idea to also illustrate the connection between a student'sstrategic leaning skills with thei exam points, as I thought their strategic learning skills would have more to do with their points in an exam. Though the following code I got the resulting picture:
+
+
+```{r Codechunk6, echo=FALSE}
+
+p111 <- ggplot(learning2014, aes(x = stra, y = points, col =gender))
+
+# define the visualization type (points)
+p222 <- p1 + geom_point()
+
+# add a regression line
+p333 <- p2 + geom_smooth(method = "lm")
+
+# add a main title and draw the plot
+p444 <- p3 + ggtitle("Student's strategic learning skills versus exam points")
+p444
+ggsave("plot2.png", width = 5, height = 5)
+
+```
+
+
+From this I concluded, that there seems to be more connection with a students strategic learning skills and their exam points, at least more so than with their deep leaning skills. The regression line in this case, is an ascending line i. e. the slope of the line is positive. This tends to say that the more the student is inclined towads strategic learning, the bigger number of points they seem to score from an exam. However, these are just initial observations, and have little if nothing to do with actual statistical analysis - but based on these ponderings and inclinations I would, as a statistician, try to establish my further work on this notion.
+
+Single regression:
+
+```{r, echo=FALSE}
+library(ggplot2)
+qplot(attitude, points, data = learning2014) + geom_smooth(method = "lm")
+
+# fit a linear model
+my_model <- lm(points ~ attitude, data = learning2014)
+
+# print out a summary of the model
+summary(my_model)
+```
+
+```{r, echo=FALSE}
+library(ggplot2)
+qplot(deep, points, data = learning2014) + geom_smooth(method = "lm")
+
+# Fit a linear model
+my_model1 <- lm(points ~ deep, data = learning2014)
+
+# Summary of the model
+summary(my_model1)
+```
+
+```{r, echo=FALSE}
+library(ggplot2)
+qplot(stra, points, data = learning2014) + geom_smooth(method = "lm")
+
+# Fit a linear model
+my_model2 <- lm(points ~ stra, data = learning2014)
+
+# Print out a summary of the model
+summary(my_model2)
+```
+
+```{r, echo=FALSE}
+library(ggplot2)
+qplot(deep, attitude, data = learning2014) + geom_smooth(method = "lm")
+
+# Fit a linear model
+my_model3 <- lm(attitude ~ deep, data = learning2014)
+
+# Print out a summary of the model
+summary(my_model3)
+```
+
+Multiple regression.
+
+```{r, echo=FALSE}
+library(ggplot2)
+library(GGally)
+# create an plot matrix with ggpairs()
+ggpairs(learning2014, lower = list(combo = wrap("facethist", bins = 20)))
+
+# create a regression model with multiple explanatory variables
+my_model4 <- lm(attitude ~ deep + stra + surf, data = learning2014)
+
+# print out a summary of the model
+summary(my_model4)
+```
+ Show a summary of the fitted model and comment and interpret the results. Explain and interpret the statistical test related to the model parameters. If an explanatory variable in your model does not have a statistically significant relationship with the target variable, remove the variable from the model and fit the model again without it.
 
 *Describe the work you have done this week and summarize your learning.*
 
