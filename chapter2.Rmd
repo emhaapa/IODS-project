@@ -189,7 +189,7 @@ In the above summary-tables, the p-values are for attitude 4.12e-09, which is ex
 
 Attempting to find variables that have statistically significant relationships with the points-variable, I tried many options, one of which was the combination of the variables 'deep', 'stra', and 'surf' as the explanatory variables, which gave puzzling results. 
 
-```{r, echo=FALSE}
+```{r, echo=TRUE}
 library(ggplot2)
 library(GGally)
 # create an plot matrix with ggpairs()
@@ -284,5 +284,5 @@ The Normal QQ-plot is a plot of the residuals that can be used to explore the as
 
 ### The Residual vs. Leverage -plot
 
-The Residueal vs. Leverage -plot measures, how much impact a signle observation has on the model. By analyzing the plot, any observations that have a high impact on the model, can be identified. The model of the two explanatory variables affecting the points-variable, we can see that the scale of the Leverage-plot is not very wide - only from 0 to 0,05. This indicates, that no observation is stranded outside the plot, and if there are observations in the fringes of the plot, the distance to other observations is not so big. Also, all the observations seem to fall in the plot quite evenly, which in itself indicates that there are no single observations having unusually high impact on the model. So the linearity assumption can be said to be correct in this model.
+The Residual vs. Leverage -plot measures, how much impact a single observation has on the model. By analyzing the plot, any observations that have a high impact on the model, can be identified. The model of the two explanatory variables affecting the points-variable, we can see that the scale of the Leverage-plot is not very wide - only from 0 to 0,05. This indicates, that no observation is stranded outside the plot, and if there are observations in the fringes of the plot, the distance to other observations is not so big. Also, all the observations seem to fall in the plot quite evenly, which in itself indicates that there are no single observations having unusually high impact on the model. So the linearity assumption can be said to be correct in this model.
 

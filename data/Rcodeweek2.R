@@ -71,3 +71,30 @@ ggsave("plot2.png", width = 5, height = 5)
 # further work on this notion.
 
 
+# After the initial exercises, I proceeded to create a scatter plort matrix of all the variables 
+# in the learning2014 data. I use GGally and ggplot -packages to do this by first accessing the
+# aforementioned libraries and then using the function ggpairs() on learning2014.
+
+# Accessing the GGally and ggplot2 libraries
+library(GGally)
+library(ggplot2)
+
+# Using ggpairs() to create a scatter plot with more advanced features than the one Base R has to offer (pairs()-function).
+p <- ggpairs(learning2014, mapping = aes(col=gender, alpha=0.3), lower = list(combo = wrap("facethist", bins = 20)))
+# The mapping argument "aes" defines the 'aesthetics' of the plot, i. e. as in this
+# scatter plot, the colour of the spots is defined by the variable 'gender' similarly as in the previous plots and the alpha-argument decreases the opacity of the
+# colours in the scatter plot to make the picture more comprehensible.
+
+#Drawing the plot.
+p
+
+library(ggplot2)
+library(GGally)
+# create an plot matrix with ggpairs()
+ggpairs(learning2014, lower = list(combo = wrap("facethist", bins = 20)))
+
+# create a regression model with multiple explanatory variables
+my_model4 <- lm(points ~ attitude + stra, data = learning2014)
+
+# print out a summary of the model
+summary(my_model4)
