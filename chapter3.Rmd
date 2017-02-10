@@ -159,7 +159,8 @@ cbind(OR, CI)
 
 
 
-The summary of the fitted model with high_use as the target variable and absences, famrel, studytime and goout as the explanatory variables. If the odds ratio equals to 1, there is no statistical connection between the target variable and the explanatory variable in question. However,
+The summary of the fitted model with high_use as the target variable and absences, famrel, studytime and goout as the explanatory variables. It seems that all of the variables above test statistically significant in this logistic regression model, in case of the null hypothesis that the parameters for each variable are actually 0. The statistical significance levels can be read from the table similarly as in last weeks exercise.
+If the odds ratio equals to 1, there is no statistical connection between the target variable and the explanatory variable in question. However,
 hypothesis tests for the odds ratio can not used to determine statistical significance of the association between the variables in the model, like last week. Instead, confidence intervals of OR are constructed and used to determine whether or not the association is statistically significant. The confidence interval for an odds ratio has the same general formula as any confidence interval:
 Point Estimate + Confidence Coefficient multiplied by Standard Error, 
 and Point Estimate - Confidence Coefficient multiplied by Standard Error. The difference is that the confidence interval of the odds ratio is calculated on a natural logarithm scale and then converted back to the original scale, whereas this is not needed in the case of a population mean, for example. The statistical signigficance is then determined as follows: if the 95% Confidence Interval does not contain the value 1.0, the association is statistically significant at alpha = 0,05.
