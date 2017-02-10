@@ -31,13 +31,16 @@ colnames(alc)
 
 ```
 
+
+
 ## Relationships between the variables: hypothesis and exploration
+
 
 My hypothesis is that high/low alcohol consumption is n connection to the "absences" = "number of school absences", " famrel" = "quality of family relationships",  " studytime" = "weekly study time" and "goout" = "going out with friends" variables. 
 
 I presume that a high number of absences correlates somehow with high alcohol use, and a low number of such absences is in connection with a low usage of alcohol and as for family, that bad family relationships correlate with high alcohol consumption and respectively, good family relationships might be in connection with a lower consumption of alcohol. I also predict that a lot of time spent studying would contribute to a lower amount of consumed alcohol and going out with friends a lot would correlate with a higher usage, and in turn, not much free time and not going out much with friends would be a contributor to not using that much alcohol. 
 
-First, I created cross tabulations of the variables in relation to the high_use-vaiable.
+First, I created cross tabulations of the variables in relation to the high_use-variable.
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 library(gmodels)
@@ -110,6 +113,19 @@ g6 + geom_boxplot() + ggtitle("Student's going out with friends by alcohol consu
 
 ```
 
+The bar plots of all the variables are pretty straightforwad to interpret; they show the distribution of the values the variable takes - the frequency of a given value or an interval of values being depicted as a bar. From the bar plots of overall alcohol use and high alcohol use it can be concluded that the higher end of the scale for alc_use is less frequent, i.e. the students in this data answered more often from the 1-3 than 4-5 part of the scale. Low use seems more common among females than males, who were more frequently featured in the 4 and 5 bars of the bar plot. The high_use bar plot clarifies this observation: it clearly depicts the proportion of female in the high_use = "FALSE" value being significantly larger than that of male's, and in turn the quantity of men whose high_use = "TRUE" is larger than that of women.
+
+In the overall bar plot picture, for example the absence variable takes values from each of the ends of the scale, more in the lower part and in the middle than in the high numbers. For studytime the value 2 is the most common, followed by 1, so the students used little time studying more often than "a lot of time", and 4 was clearly the least common value. The goout-variable's barplot seems quite normal, the most values were 3 and the ends of the scale were less frequent. As for family relationships, the value 4 was most common and right after that the value 5, which gives an impression of quite good family relations in general for the students of this data.
+
+The box plots illustrate the 25th, 50th and 75th percentiles which are shown as "the box" in the box plot, and the lines in the fringes being the typical range. In the box plot there are also the outliers outside the lines, which are shown as discrete spots or lines.
+
+As Tuomo Nieminen in the instruction in the Data Camp -exercise states "The whiskers" or lines that extend from the box are computed so that they extend to reach a data point that is no more than 1.5*IQR away from the box. The IQR, or the inter quartile range is defined as the 25th percentile distracted from the 75th percentile.
+
+In first one of these box plots one can see that the typical range of absences versus high use is slightly wider and slightly upper in the scale when high use is TRUE than when it is false. Also the 25th to 75th percentile part, i.e. the box, is bigger. This goes well with the observations made from the cross tabulation before.
+Also in good connection with the conclusions from the cross tabulations is the family relations box plot, where the range is upper in the scale in case of low alcohol consumption, which means that in that case there were more values that indicate good family relations in case of low consumption of alcohol.
+The studytime variable's box plot shows that the range of the observations is definitely in the lower part, i. e. in the less time spent studing part of the scale, when the alcohol consumption is high, and on the other hand, the range of going out is higher on the scale when alcohol consumption is high than when it is low.
+
+# The logistic regression model
 ### The summary of the model and interpretation of the coefficients
 
 
@@ -202,10 +218,9 @@ loss_func(class = alc$high_use, prob = alc$probability)
 
 ```
 
-This model has an average of 0,238 wrong predictions. This value is quite good, considering the model setting, since it is significantly less than 0,5. Surely it could be less for the model to be extremely good, but On average, 1 in 4 predictions is wrong but at this stage, it is not an alarming number - roughly over 75 percent of the predictions are correct.
+This model has an average of 0,238 wrong predictions or inaccurately classified individuals, which is also called the training error. The value is quite good, considering the model setting, since it is significantly less than 0,5. Surely it could be less for the model to be extremely good - on average, 1 in 4 predictions is wrong - but at this stage, it is not an alarming number, since roughly over 75 percent of the predictions are correct. This model is much better than, for example, tossing a coin to predict the values of the variables.
 
 
- Compute the total proportion of inaccurately classified individuals (= the training error) and comment on all the results. Compare the performance of the model with performance achieved by some simple guessing strategy. 
 
 
 
