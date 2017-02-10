@@ -1,7 +1,6 @@
 ---
 title: "Week 3: logistic regression"
 author: "Emma Haapa"
-date: "10 helmikuuta 2017"
 output: html_document
 ---
 
@@ -11,6 +10,7 @@ knitr::opts_chunk$set(echo = FALSE)
 
 # Week 3: logistic regression {#anchor}
 
+
 ### A look into the data set : Student alcohol consumption
 
 The data this week is a data set called "Student alcohol consumption" of Fabio Pagnotta and Hossain Mohammad Amran from the [UCI Machine Leaning repository](https://archive.ics.uci.edu/ml/datasets/STUDENT+ALCOHOL+CONSUMPTION). The data set povides information about students' alcohol consuption, their background information, activities and for example absences from school. The aim was to provide a means to explore if there is any correlation between the aforementioned alcohol usage and the social, gender and study time variables for each student of a math and potuguese class. There are in total 35 variables and 382 observations in the data set joined from different sets of observations based on the variables in common between the both groups in the data wrangling part of the exercise, the variables including for example "Mother's education", "Father's education", "age", "sex" and "number of school absences" from the original questionnaire. What is more, there are two new variables: "alc_use" which is combined and averaged from "Weekend alcohol consumption" and "workday alcohol consumption" and "high_use", which is essentially a variable that gets the value "TRUE", when "alc_use" is greater than 2 and "FALSE" otherwise.
@@ -18,7 +18,7 @@ The data this week is a data set called "Student alcohol consumption" of Fabio P
 The names of the variables can be seen from the R-print below, produced with the colnames()-function.
 
 
-```{r, echo=FALSE, message=TRUE, warning=FALSE}
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
 library(dplyr) #accessed the dplyr-library
 library(ggplot2) #accessed the ggplot2-library
 library(readr) #accessed the readr-library
@@ -42,6 +42,7 @@ I presume that a high number of absences correlates somehow with high alcohol us
 
 First, I created cross tabulations of the variables in relation to the high_use-variable.
 
+
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 library(gmodels)
 library(gdata)
@@ -56,6 +57,7 @@ table(high_use = alc$high_use, studytime = alc$studytime)
 table(high_use = alc$high_use, goout = alc$goout)
 
 ```
+
 
 I decided to make the cross tabulations with high_use instead of the whole alc_use- variable, since it seemed more clear and straghtforward to interpret the tables using that approach. It can be seen from the cross tabulations that when high_use gets the value "FALSE", i.e. alcohol consumption is less or equal to 2, there were more observations in the lower part of the absence range, i. e. there were 0-10 absences in case of one student. In case of high alcohol use, there were not as many students who had 0-10 absences, as there were those who didn't qualify for high use. In the high use case, there were also some observations in the high end of the absence scale, i.e. some students who had even 18 or 19 absences, but the diffeence to the number of observations in that end for the low alcohol use is only that there is 1 student with 18 absences present in the data.
 
@@ -113,6 +115,7 @@ g6 + geom_boxplot() + ggtitle("Student's going out with friends by alcohol consu
 
 ```
 
+
 The bar plots of all the variables are pretty straightforwad to interpret; they show the distribution of the values the variable takes - the frequency of a given value or an interval of values being depicted as a bar. From the bar plots of overall alcohol use and high alcohol use it can be concluded that the higher end of the scale for alc_use is less frequent, i.e. the students in this data answered more often from the 1-3 than 4-5 part of the scale. Low use seems more common among females than males, who were more frequently featured in the 4 and 5 bars of the bar plot. The high_use bar plot clarifies this observation: it clearly depicts the proportion of female in the high_use = "FALSE" value being significantly larger than that of male's, and in turn the quantity of men whose high_use = "TRUE" is larger than that of women.
 
 In the overall bar plot picture, for example the absence variable takes values from each of the ends of the scale, more in the lower part and in the middle than in the high numbers. For studytime the value 2 is the most common, followed by 1, so the students used little time studying more often than "a lot of time", and 4 was clearly the least common value. The goout-variable's barplot seems quite normal, the most values were 3 and the ends of the scale were less frequent. As for family relationships, the value 4 was most common and right after that the value 5, which gives an impression of quite good family relations in general for the students of this data.
@@ -125,7 +128,9 @@ In first one of these box plots one can see that the typical range of absences v
 Also in good connection with the conclusions from the cross tabulations is the family relations box plot, where the range is upper in the scale in case of low alcohol consumption, which means that in that case there were more values that indicate good family relations in case of low consumption of alcohol.
 The studytime variable's box plot shows that the range of the observations is definitely in the lower part, i. e. in the less time spent studing part of the scale, when the alcohol consumption is high, and on the other hand, the range of going out is higher on the scale when alcohol consumption is high than when it is low.
 
-# The logistic regression model
+## The logistic regression model
+
+
 ### The summary of the model and interpretation of the coefficients
 
 
@@ -151,6 +156,7 @@ cbind(OR, CI)
 
 
 ```
+
 
 
 The summary of the fitted model with high_use as the target variable and absences, famrel, studytime and goout as the explanatory variables. If the odds ratio equals to 1, there is no statistical connection between the target variable and the explanatory variable in question. However,
@@ -185,7 +191,10 @@ table(high_use = alc$high_use, prediction = alc$prediction)
 
 ```
 
+
 The predict() function can be used to make predictions with the model.  By using predict() on the model object and mutating the alc data again by adding a column 'probability' with the predicted probabilities, adding a column 'prediction' which is true if the value of 'probability' is greater than 0.5, I produced a confusion matrix or the cross table above. It shows how good the model is in terms of predicting: it can be seen that when high_use is false, 242 times the prediction with this model is also false and only 26 times actually true (when the prediction would be wrong), and when high_use is true, the prediction is false in 65 cases and true in 49 cases. This is a little bit confusing, and gives the impression that predictions in case of the actual value being true are not accurate based on this model, but when the actual calue is false the predictions tend to be more accurate than not. 
+
+
 
 ```{r}
 # access dplyr and ggplot2
@@ -201,10 +210,13 @@ g + geom_point()
 table(high_use = alc$high_use, prediction = alc$prediction) %>% prop.table %>% addmargins
 ```
 
+
+
 By drawing the plot of actual values vs. predictions and the probability cross table of actual values vs. predictions, the proportions of the false and true predictions are more visually comprehensible.
 In the case of binary classification the wellness of the model can be determined by looking at its accuracy, which means the average number of observations that are correctly classified. Logistic regression is a classification method, in which the aim is to minimize the number of wrongly classified observations. The notion of penalty or loss function for the logistic regression describes the mean of the wrongly classified observations or in this case, students. The less penalty, the better the model.
 
 First step is to define the loss function as the average of the wrong predictions.
+
 
 ```{r}
 # define a loss function (mean prediction error)
@@ -218,11 +230,32 @@ loss_func(class = alc$high_use, prob = alc$probability)
 
 ```
 
+
+
 This model has an average of 0,238 wrong predictions or inaccurately classified individuals, which is also called the training error. The value is quite good, considering the model setting, since it is significantly less than 0,5. Surely it could be less for the model to be extremely good - on average, 1 in 4 predictions is wrong - but at this stage, it is not an alarming number, since roughly over 75 percent of the predictions are correct. This model is much better than, for example, tossing a coin to predict the values of the variables.
 
 
+```{r, echo=FALSE, warning=FALSE}
+# define a loss function (average prediction error)
+loss_func <- function(class, prob) {
+  n_wrong <- abs(class - prob) > 0.5
+  mean(n_wrong)
+}
+
+# compute the average number of wrong predictions in the (training) data
+loss_func(class = alc$high_use, prob = alc$probability)
+
+nrow(alc)
+
+# K-fold cross-validation
+library(boot)
+cv <- cv.glm(data = alc, cost = loss_func, glmfit = m, K = 10)
+
+# average number of wrong predictions in the cross validation
+cv$delta[1]
+```
 
 
-
+It can be seen from the above that my model has a better test set performance (only 0,2382199 prediction error using the 10-fold cross validation) than the model used in the DataCamp exercise, which had an error of 0,26.   
 
 

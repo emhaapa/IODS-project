@@ -413,30 +413,6 @@ plot(my_model4, which=c(2,5,1))</code></pre>
 <h3>A look into the data set : Student alcohol consumption</h3>
 <p>The data this week is a data set called “Student alcohol consumption” of Fabio Pagnotta and Hossain Mohammad Amran from the <a href="https://archive.ics.uci.edu/ml/datasets/STUDENT+ALCOHOL+CONSUMPTION">UCI Machine Leaning repository</a>. The data set povides information about students’ alcohol consuption, their background information, activities and for example absences from school. The aim was to provide a means to explore if there is any correlation between the aforementioned alcohol usage and the social, gender and study time variables for each student of a math and potuguese class. There are in total 35 variables and 382 observations in the data set joined from different sets of observations based on the variables in common between the both groups in the data wrangling part of the exercise, the variables including for example “Mother’s education”, “Father’s education”, “age”, “sex” and “number of school absences” from the original questionnaire. What is more, there are two new variables: “alc_use” which is combined and averaged from “Weekend alcohol consumption” and “workday alcohol consumption” and “high_use”, which is essentially a variable that gets the value “TRUE”, when “alc_use” is greater than 2 and “FALSE” otherwise.</p>
 <p>The names of the variables can be seen from the R-print below, produced with the colnames()-function.</p>
-<pre><code>## Parsed with column specification:
-## cols(
-##   .default = col_character(),
-##   X1 = col_integer(),
-##   age = col_integer(),
-##   Medu = col_integer(),
-##   Fedu = col_integer(),
-##   traveltime = col_integer(),
-##   studytime = col_integer(),
-##   failures = col_integer(),
-##   famrel = col_integer(),
-##   freetime = col_integer(),
-##   goout = col_integer(),
-##   Dalc = col_integer(),
-##   Walc = col_integer(),
-##   health = col_integer(),
-##   absences = col_integer(),
-##   G1 = col_integer(),
-##   G2 = col_integer(),
-##   G3 = col_integer(),
-##   alc_use = col_double(),
-##   high_use = col_logical()
-## )</code></pre>
-<pre><code>## See spec(...) for full column specifications.</code></pre>
 <pre><code>##  [1] &quot;X1&quot;         &quot;school&quot;     &quot;sex&quot;        &quot;age&quot;        &quot;address&quot;   
 ##  [6] &quot;famsize&quot;    &quot;Pstatus&quot;    &quot;Medu&quot;       &quot;Fedu&quot;       &quot;Mjob&quot;      
 ## [11] &quot;Fjob&quot;       &quot;reason&quot;     &quot;nursery&quot;    &quot;internet&quot;   &quot;guardian&quot;  
@@ -450,7 +426,7 @@ plot(my_model4, which=c(2,5,1))</code></pre>
 <h2>Relationships between the variables: hypothesis and exploration</h2>
 <p>My hypothesis is that high/low alcohol consumption is n connection to the “absences” = “number of school absences”, &quot; famrel&quot; = “quality of family relationships”, &quot; studytime&quot; = “weekly study time” and “goout” = “going out with friends” variables.</p>
 <p>I presume that a high number of absences correlates somehow with high alcohol use, and a low number of such absences is in connection with a low usage of alcohol and as for family, that bad family relationships correlate with high alcohol consumption and respectively, good family relationships might be in connection with a lower consumption of alcohol. I also predict that a lot of time spent studying would contribute to a lower amount of consumed alcohol and going out with friends a lot would correlate with a higher usage, and in turn, not much free time and not going out much with friends would be a contributor to not using that much alcohol.</p>
-<p>First, I created cross tabulations of the variables in relation to the high_use-vaiable.</p>
+<p>First, I created cross tabulations of the variables in relation to the high_use-variable.</p>
 <pre><code>##         absences
 ## high_use  0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 16 17 18 19 20 21 26
 ##    FALSE 52 38 42 33 24 16 16  9 14  6  5  2  4  1  1  0  0  1  0  2  1  0
@@ -542,6 +518,10 @@ plot(my_model4, which=c(2,5,1))</code></pre>
 <p>First step is to define the loss function as the average of the wrong predictions.</p>
 <pre><code>## [1] 0.2382199</code></pre>
 <p>This model has an average of 0,238 wrong predictions or inaccurately classified individuals, which is also called the training error. The value is quite good, considering the model setting, since it is significantly less than 0,5. Surely it could be less for the model to be extremely good - on average, 1 in 4 predictions is wrong - but at this stage, it is not an alarming number, since roughly over 75 percent of the predictions are correct. This model is much better than, for example, tossing a coin to predict the values of the variables.</p>
+<pre><code>## [1] 0.2382199</code></pre>
+<pre><code>## [1] 382</code></pre>
+<pre><code>## [1] 0.2460733</code></pre>
+<p>It can be seen from the above that my model has a better test set performance (only 0,2382199 prediction error using the 10-fold cross validation) than the model used in the DataCamp exercise, which had an error 0f 0,26.</p>
 <hr />
 </div>
 </div>
