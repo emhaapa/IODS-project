@@ -1,11 +1,11 @@
- ---
+---
 title: "IODS course project"
 author: "Emma Haapa"
 output:
   html_document:
     theme: sandstone
     toc: true
-    toc_depth: 2
+    toc_depth: 3
     fig_caption: true
     fig_width: 6
     fig_height: 4
@@ -20,6 +20,11 @@ output:
 ***
   
 ```{r child = "chapter2.Rmd"}
+```
+
+***
+  
+```{r child = "chapter3.Rmd"}
 ```
 
 ***

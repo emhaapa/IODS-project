@@ -2,7 +2,6 @@
 title: 'Course: Introduction to open data science'
 author: "Emma Haapa"
 ---
-c
 
 # Week 2: Regression and model validation {#anchor}
 

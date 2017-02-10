@@ -1,0 +1,192 @@
+---
+title: "Week 3: logistic regression"
+author: "Emma Haapa"
+date: "10 helmikuuta 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+# Week 3: logistic regression {#anchor}
+
+### A look into the data set : Student alcohol consumption
+
+The data this week is a data set called "Student alcohol consumption" of Fabio Pagnotta and Hossain Mohammad Amran from the [UCI Machine Leaning repository](https://archive.ics.uci.edu/ml/datasets/STUDENT+ALCOHOL+CONSUMPTION). The data set povides information about students' alcohol consuption, their background information, activities and for example absences from school. The aim was to provide a means to explore if there is any correlation between the aforementioned alcohol usage and the social, gender and study time variables for each student of a math and potuguese class. There are in total 35 variables and 382 observations in the data set joined from different sets of observations based on the variables in common between the both groups in the data wrangling part of the exercise, the variables including for example "Mother's education", "Father's education", "age", "sex" and "number of school absences" from the original questionnaire. What is more, there are two new variables: "alc_use" which is combined and averaged from "Weekend alcohol consumption" and "workday alcohol consumption" and "high_use", which is essentially a variable that gets the value "TRUE", when "alc_use" is greater than 2 and "FALSE" otherwise.
+
+The names of the variables can be seen from the R-print below, produced with the colnames()-function.
+
+
+```{r, echo=FALSE, message=TRUE, warning=FALSE}
+library(dplyr) #accessed the dplyr-library
+library(ggplot2) #accessed the ggplot2-library
+library(readr) #accessed the readr-library
+library(tidyr) #accessed tidyr-library
+options(max.print=1000000)
+
+alc <- read_csv2(file = "alc2.csv", col_names = TRUE, col_types = NULL)
+
+colnames(alc)
+
+```
+
+## Relationships between the variables: hypothesis and exploration
+
+My hypothesis is that high/low alcohol consumption is n connection to the "absences" = "number of school absences", " famrel" = "quality of family relationships",  " studytime" = "weekly study time" and "goout" = "going out with friends" variables. 
+
+I presume that a high number of absences correlates somehow with high alcohol use, and a low number of such absences is in connection with a low usage of alcohol and as for family, that bad family relationships correlate with high alcohol consumption and respectively, good family relationships might be in connection with a lower consumption of alcohol. I also predict that a lot of time spent studying would contribute to a lower amount of consumed alcohol and going out with friends a lot would correlate with a higher usage, and in turn, not much free time and not going out much with friends would be a contributor to not using that much alcohol.
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+library(gmodels)
+library(gdata)
+library(dplyr) #accessed the dplyr-library
+library(ggplot2) #accessed the ggplot2-library
+library(readr) #accessed the readr-library
+library(tidyr) #accessed tidyr-library
+
+g1 <- ggplot(data = alc, aes(x = alc_use, fill=sex))
+
+# define the plot as a bar plot and draw it
+g1 + geom_bar()
+
+g2 <- ggplot(data = alc, aes(x = high_use, fill=sex))
+
+# define the plot as a bar plot and draw it
+g2 + geom_bar()
+
+# draw a bar plot of each variable
+gather(alc) %>% ggplot(aes(value)) + facet_wrap("key", scales = "free") + geom_bar()
+
+
+# initialise a plot of high_use and absences
+
+g2 <- ggplot(alc, aes(x = high_use, y = absences, col=sex))
+
+g3 <- g2 + ggtitle("Student absences by alcohol consumption and sex")
+# define the plot as a boxplot and draw it
+
+g3 + geom_boxplot()
+
+# initialize a plot of high_use and G3
+g4 <- ggplot(alc, aes(x = high_use, y = famrel, col=sex))
+
+# define the plot as a boxplot and draw it
+g4 + geom_boxplot() + ggtitle("Student's family relations by alcohol consumption and sex")
+
+# initialize a plot of high_use and G3
+g5 <- ggplot(alc, aes(x = high_use, y = studytime, col=sex))
+
+# define the plot as a boxplot and draw it
+g5 + geom_boxplot() + ggtitle("Student's studytime by alcohol consumption and sex")
+
+
+# initialize a plot of high_use and G3
+g6 <- ggplot(alc, aes(x = high_use, y = goout, col=sex))
+
+# define the plot as a boxplot and draw it
+g6 + geom_boxplot() + ggtitle("Student's going out with friends by alcohol consumption and sex")
+
+```
+
+### The summary of the model and interpretation of the coefficients
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+# find the model with glm()
+m <- glm(high_use ~ absences + famrel + studytime + goout, data = alc, family = "binomial")
+
+# print out a summary of the model
+summary(m)
+
+# print out the coefficients of the model
+coef(m)
+
+# compute odds ratios (OR)
+OR <- coef(m) %>% exp
+
+# compute confidence intervals (CI)
+CI <- confint(m) %>% exp
+
+# print out the odds ratios with their confidence intervals
+cbind(OR, CI)
+
+
+
+```
+
+
+The summary of the fitted model with high_use as the target variable and absences, famrel, studytime and goout as the explanatory variables. If the odds ratio equals to 1, there is no statistical connection between the target variable and the explanatory variable in question. However,
+hypothesis tests for the odds ratio can not used to determine statistical significance of the association between the variables in the model, like last week. Instead, confidence intervals of OR are constructed and used to determine whether or not the association is statistically significant. The confidence interval for an odds ratio has the same general formula as any confidence interval:
+Point Estimate + Confidence Coefficient multiplied by Standard Error, 
+and Point Estimate - Confidence Coefficient multiplied by Standard Error. The difference is that the confidence interval of the odds ratio is calculated on a natural logarithm scale and then converted back to the original scale, whereas this is not needed in the case of a population mean, for example. The statistical signigficance is then determined as follows: if the 95% Confidence Interval does not contain the value 1.0, the association is statistically significant at alpha = 0,05.
+
+The exponents of the printed coefficients can be interpreted as the odd ratios between a unit change in the corresponding explanatory variable, versus no change in that explanatory variable. To illustrate this with an example: if there is a unit change in absences the student is 1,07 times more likely to be inclined towards high-alcohol usage, which tends to say that high number of absences tells something about alcohol usage and the two variables are possibly in some sort of statistical relationship, also reassuring that my initial hypothesis regarding the higer number of absences and high use of alcohol being in positive connection. 
+
+In turn, if there's a unit change in family relations, the person is only 0,71 times more likely to incline towards high usage, so if there is no change in famrel, the person is 1/0,71=1,41 times more likely to high use. Gathering from that the hypothesis on bad family relations being connected to higher use of alcohol seems to be legit, as no change in the explanatory variable gives the result of the student being more likely to use more alcohol. In this case there's also a possibility of a statistically significant relationship between the explanatory and the target variable.
+
+As for how the students spend their spare time, for time spent studying the exponent of the coefficient i.e. the odds ratio is only 0.57 which means that if there's no change in the studytime variable the student is even 1/0,57 = 1,75 times more likely to high use. It seems that my hypothesis with regards to this variable and its connection with high use is also more in the right than in the wrong. Consequently, going out with friends and high use seem to have the strongest connection: a unit change in the variable goout means that the student is 2,14 times more likely to use a lot of alcohol, which is the largest number in the exponents of the coefficients table. It would mean that the hypothesis is correct in light of this initial exploration and this paticular model, and also goes well together with the intuition that the more time spend hanging out with a group of friends the more likely the student is to use alcohol.
+
+From the above coefficient/confidence interval table it can also be seen that none of the confidence intervals contain the value 1,0, which indicates that the above statements considering the explanatory variables are somewhat true and their relationship to the target variable are statistically significant at confidence level 0,05.
+
+
+```{r}
+# fit the model
+m <- glm(high_use ~ absences + famrel + studytime + goout, data = alc, family = "binomial")
+
+# predict() the probability of high_use
+probabilities <- predict(m, type = "response")
+
+# add the predicted probabilities to 'alc'
+alc <- mutate(alc, probability = probabilities)
+
+# use the probabilities to make a prediction of high_use
+alc <- mutate(alc, prediction = (probability > 0.5))
+
+# tabulate the target variable versus the predictions
+table(high_use = alc$high_use, prediction = alc$prediction)
+
+```
+
+The predict() function can be used to make predictions with the model.  By using predict() on the model object and mutating the alc data again by adding a column 'probability' with the predicted probabilities, adding a column 'prediction' which is true if the value of 'probability' is greater than 0.5, I produced a confusion matrix or the cross table above. It shows how good the model is in terms of predicting: it can be seen that when high_use is false, 242 times the prediction with this model is also false and only 26 times actually true (when the prediction would be wrong), and when high_use is true, the prediction is false in 65 cases and true in 49 cases. This is a little bit confusing, and gives the impression that predictions in case of the actual value being true are not accurate based on this model, but when the actual calue is false the predictions tend to be more accurate than not. 
+
+```{r}
+# access dplyr and ggplot2
+library(dplyr); library(ggplot2)
+
+# initialize a plot of 'high_use' versus 'probability' in 'alc'
+g <- ggplot(alc, aes(x = probability, y = high_use, col = prediction))
+
+# define the geom as points and draw the plot
+g + geom_point()
+
+# tabulate the target variable versus the predictions
+table(high_use = alc$high_use, prediction = alc$prediction) %>% prop.table %>% addmargins
+```
+
+By drawing the plot of actual values vs. predictions and the probability cross table of actual values vs. predictions, the proportions of the false and true predictions are more visually comprehensible.
+In the case of binary classification the wellness of the model can be determined by looking at its accuracy, which means the average number of observations that are correctly classified. Logistic regression is a classification method, in which the aim is to minimize the number of wrongly classified observations. The notion of penalty or loss function for the logistic regression describes the mean of the wrongly classified observations or in this case, students. The less penalty, the better the model.
+
+First step is to define the loss function as the average of the wrong predictions.
+
+```{r}
+# define a loss function (mean prediction error)
+loss_func <- function(class, prob) {
+  n_wrong <- abs(class - prob) > 0.5
+  mean(n_wrong)
+}
+
+loss_func(class = alc$high_use, prob = alc$probability)
+
+
+```
+
+This model has an average of 0,238 wrong predictions. This value is quite good, considering the model setting, since it is significantly less than 0,5. Surely it could be less for the model to be extremely good, but On average, 1 in 4 predictions is wrong but at this stage, it is not an alarming number - roughly over 75 percent of the predictions are correct.
+
+
+ Compute the total proportion of inaccurately classified individuals (= the training error) and comment on all the results. Compare the performance of the model with performance achieved by some simple guessing strategy. 
+
+
+
+
+
