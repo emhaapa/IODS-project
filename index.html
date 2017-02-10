@@ -517,10 +517,11 @@ plot(my_model4, which=c(2,5,1))</code></pre>
 <p>First step is to define the loss function as the average of the wrong predictions.</p>
 <pre><code>## [1] 0.2382199</code></pre>
 <p>This model has an average of 0,238 wrong predictions or inaccurately classified individuals, which is also called the training error. The value is quite good, considering the model setting, since it is significantly less than 0,5. Surely it could be less for the model to be extremely good - on average, 1 in 4 predictions is wrong - but at this stage, it is not an alarming number, since roughly over 75 percent of the predictions are correct. This model is much better than, for example, tossing a coin to predict the values of the variables.</p>
+<p>Now, using the 10-fold cross validation my model gets the following values:</p>
 <pre><code>## [1] 0.2382199</code></pre>
 <pre><code>## [1] 382</code></pre>
-<pre><code>## [1] 0.2460733</code></pre>
-<p>It can be seen from the above that my model has a better test set performance (only 0,2382199 prediction error using the 10-fold cross validation) than the model used in the DataCamp exercise, which had an error of 0,26.</p>
+<pre><code>## [1] 0.2434555</code></pre>
+<p>It can be seen from the above that my model has a better test set performance - only 0,2382199 prediction error using the 10-fold cross validation - than the model used in the DataCamp exercise, which had an error of 0,26.</p>
 <hr />
 </div>
 </div>
