@@ -152,9 +152,9 @@ $(document).ready(function () {
 <li><a href="#anchor">Week 3: logistic regression</a><ul>
 <li><a href="#a-look-into-the-data-set-student-alcohol-consumption">A look into the data set : Student alcohol consumption</a></li>
 <li><a href="#relationships-between-the-variables-hypothesis-and-exploration">Relationships between the variables: hypothesis and exploration</a></li>
-</ul></li>
 <li><a href="#the-logistic-regression-model">The logistic regression model</a><ul>
 <li><a href="#the-summary-of-the-model-and-interpretation-of-the-coefficients">The summary of the model and interpretation of the coefficients</a></li>
+</ul></li>
 </ul></li>
 </ul>
 </div>
@@ -459,9 +459,8 @@ plot(my_model4, which=c(2,5,1))</code></pre>
 <p>As Tuomo Nieminen in the instruction in the Data Camp -exercise states “The whiskers” or lines that extend from the box are computed so that they extend to reach a data point that is no more than 1.5*IQR away from the box. The IQR, or the inter quartile range is defined as the 25th percentile distracted from the 75th percentile.</p>
 <p>In first one of these box plots one can see that the typical range of absences versus high use is slightly wider and slightly upper in the scale when high use is TRUE than when it is false. Also the 25th to 75th percentile part, i.e. the box, is bigger. This goes well with the observations made from the cross tabulation before. Also in good connection with the conclusions from the cross tabulations is the family relations box plot, where the range is upper in the scale in case of low alcohol consumption, which means that in that case there were more values that indicate good family relations in case of low consumption of alcohol. The studytime variable’s box plot shows that the range of the observations is definitely in the lower part, i. e. in the less time spent studing part of the scale, when the alcohol consumption is high, and on the other hand, the range of going out is higher on the scale when alcohol consumption is high than when it is low.</p>
 </div>
-</div>
-<div id="the-logistic-regression-model" class="section level1">
-<h1>The logistic regression model</h1>
+<div id="the-logistic-regression-model" class="section level2">
+<h2>The logistic regression model</h2>
 <div id="the-summary-of-the-model-and-interpretation-of-the-coefficients" class="section level3">
 <h3>The summary of the model and interpretation of the coefficients</h3>
 <pre><code>## 
@@ -521,8 +520,9 @@ plot(my_model4, which=c(2,5,1))</code></pre>
 <pre><code>## [1] 0.2382199</code></pre>
 <pre><code>## [1] 382</code></pre>
 <pre><code>## [1] 0.2460733</code></pre>
-<p>It can be seen from the above that my model has a better test set performance (only 0,2382199 prediction error using the 10-fold cross validation) than the model used in the DataCamp exercise, which had an error 0f 0,26.</p>
+<p>It can be seen from the above that my model has a better test set performance (only 0,2382199 prediction error using the 10-fold cross validation) than the model used in the DataCamp exercise, which had an error of 0,26.</p>
 <hr />
+</div>
 </div>
 </div>
 
