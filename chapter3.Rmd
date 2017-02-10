@@ -35,7 +35,9 @@ colnames(alc)
 
 My hypothesis is that high/low alcohol consumption is n connection to the "absences" = "number of school absences", " famrel" = "quality of family relationships",  " studytime" = "weekly study time" and "goout" = "going out with friends" variables. 
 
-I presume that a high number of absences correlates somehow with high alcohol use, and a low number of such absences is in connection with a low usage of alcohol and as for family, that bad family relationships correlate with high alcohol consumption and respectively, good family relationships might be in connection with a lower consumption of alcohol. I also predict that a lot of time spent studying would contribute to a lower amount of consumed alcohol and going out with friends a lot would correlate with a higher usage, and in turn, not much free time and not going out much with friends would be a contributor to not using that much alcohol.
+I presume that a high number of absences correlates somehow with high alcohol use, and a low number of such absences is in connection with a low usage of alcohol and as for family, that bad family relationships correlate with high alcohol consumption and respectively, good family relationships might be in connection with a lower consumption of alcohol. I also predict that a lot of time spent studying would contribute to a lower amount of consumed alcohol and going out with friends a lot would correlate with a higher usage, and in turn, not much free time and not going out much with friends would be a contributor to not using that much alcohol. 
+
+First, I created cross tabulations of the variables in relation to the high_use-vaiable.
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 library(gmodels)
@@ -45,6 +47,25 @@ library(ggplot2) #accessed the ggplot2-library
 library(readr) #accessed the readr-library
 library(tidyr) #accessed tidyr-library
 
+table(high_use = alc$high_use, absences = alc$absences)
+table(high_use = alc$high_use, famrel = alc$famrel)
+table(high_use = alc$high_use, studytime = alc$studytime)
+table(high_use = alc$high_use, goout = alc$goout)
+
+```
+
+I decided to make the cross tabulations with high_use instead of the whole alc_use- variable, since it seemed more clear and straghtforward to interpret the tables using that approach. It can be seen from the cross tabulations that when high_use gets the value "FALSE", i.e. alcohol consumption is less or equal to 2, there were more observations in the lower part of the absence range, i. e. there were 0-10 absences in case of one student. In case of high alcohol use, there were not as many students who had 0-10 absences, as there were those who didn't qualify for high use. In the high use case, there were also some observations in the high end of the absence scale, i.e. some students who had even 18 or 19 absences, but the diffeence to the number of observations in that end for the low alcohol use is only that there is 1 student with 18 absences present in the data.
+
+For those students, whose family relationships were good, such as values 3-5, got a high_use value of "FALSE", and didn't qualify for high alcohol use. It could be further inspected, whether the correlation between good family relations and lower alcohol use is actually true, but looking at this table good family relations do seem to matter.
+
+Looking at the studytime table, the students whose alcohol use was high, also used less time studying - there were more observations in the 1-2 end of the scale in case of the high_use TRUE value than there were in the 2-4 end of the scale. So those students who used higher amounts of alcohol also studied less, according to this initial observation from the cross tabulation.
+
+Also those students, who didn't go out so much didn't seem to get high_use = TRUE -values as often as those whose going out variable got values 3-5. So going out more seems to be in connection with high alcohol usage based on the tabulation.
+
+To further visualize these ponderings, I used ggplot, geom_bar and geom_boxplot to draw some pictures about the distributions of these variables, and in addition, a bar plot of each variable using the pipe-method introduced in the DataCamp-exercise.
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
 g1 <- ggplot(data = alc, aes(x = alc_use, fill=sex))
 
 # define the plot as a bar plot and draw it
