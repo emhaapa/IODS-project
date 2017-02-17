@@ -4,9 +4,9 @@ author: "Emma Haapa"
 output:
   html_document:
     theme: sandstone
-    toc: true
-    toc_depth: 3
-    fig_caption: true
+    toc: TRUE
+    toc_depth: 2
+    fig_caption: TRUE
     fig_width: 6
     fig_height: 4
     code_folding: hide
@@ -14,24 +14,22 @@ output:
 
 ***
   
-```{r child = "chapter1.Rmd"}
+```{r child = "chapter1.Rmd", cache=TRUE}
 ```
   
 ***
   
-```{r child = "chapter2.Rmd"}
+```{r child = "chapter2.Rmd", cache=TRUE}
 ```
 
 ***
   
-```{r child = "chapter3.Rmd"}
+```{r child = "chapter3.Rmd", cache=TRUE}
 ```
 
 ***
 
-***
-
-```{r child = "chapter4.Rmd"}
+```{r child = "chapter441.Rmd",error=TRUE}
 ```
 
 ***

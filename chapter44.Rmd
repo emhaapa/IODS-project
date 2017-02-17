@@ -4,6 +4,29 @@ author: "Emma Haapa"
 output: html_document
 ---
 
+
+
+
+```{r chunk1, echo=FALSE, message=FALSE, warning=FALSE}
+
+# plot matrix of the variables
+pairs(Boston)
+ library(tidyverse)
+ library(corrplot)
+# calculate the correlation matrix and round it
+cor_matrix<-cor(Boston)
+
+# print the correlation matrix
+cor_matrix <- cor_matrix%>%round(2)
+cor_matrix
+
+# visualize the correlation matrix
+corrplot(cor_matrix, method="circle", type = "upper", cl.pos = "b", tl.pos ="d", tl.cex = 0.6)
+
+
+```
+
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
 ```

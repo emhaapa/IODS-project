@@ -37,8 +37,8 @@ summary(Boston)
 First, I wanted to see how the crime rate is affected by different variables. To do that, I created boxplots of some of the variables in relation to the crime rate -variable "crim". I am not sure how useful these explorations are, however I decided to engage in them as I thought it would at least be good practice, if not anything else.
 Consequently, I created a new variable "high_crim" by mutating the Boston data and setting high_crim to be true when the crim-variable gets values from (roughly) above the mean (3.6...). The variables I chose are those that in my opinion might have some kind of connection or relationship with the crime rate, the variables being the following:
 
-"lstat"	= lower status of the population (percent).
-"rad"	= index of accessibility to radial highways
+"lstat" = lower status of the population (percent) 
+"rad" = index of accessibility to radial highways.
 
 
 ```{r yes, echo=FALSE, message=FALSE, warning=FALSE}
@@ -71,7 +71,7 @@ g7 + geom_boxplot() + ggtitle("Crime rate by index of accessibility to radial hi
 ```
 
 
-Judging from the first box plot it seems that when the percent of population classified as lower is higher, the high_crime -variable gets the value TRUE. This essentially means that when there are more "lower class" -people in the neighbourhood or town, also the crime rate is elevated. This confirms to some extent my initial hypothesis of these variables having some kind of connection, and also goes along with the intuition that low-class neighbourhoods would have a higher crime rate than those inhabitated by people of the wealthier upper or mid class. The second box plot shows that higher crime rate is in connection to the access to radial highways, as the high_crime variable gets the value true for high values for the acces-variable. One could think that areas in the midst of or in the crossroads of big highways would have more traffic, more people and more gangs etc. i.e. more criminal activity would take place in that kind of setting. 
+Judging from the first box plot it seems that when the percent of population classified as lower is higher, the high_crime-variable gets the value TRUE. This essentially means that when there are more "lower class" -people in the neighbourhood or town, also the crime rate is elevated. This confirms to some extent my initial hypothesis of these variables having some kind of connection, and also goes along with the intuition that low-class neighbourhoods would have a higher crime rate than those inhabitated by people of the wealthier upper or mid class. The second box plot shows that higher crime rate is in connection to the access to radial highways, as the high_crime variable gets the value true for high values for the acces-variable. One could think that areas in the midst of or in the crossroads of big highways would have more traffic, more people and more gangs etc. i.e. more criminal activity would take place in that kind of setting. 
 
 To look at the correlation and relationships between all the variables in general, I created plots and correlation matrices with pairs()- and cor()-functions. Below the correlation matrix is also visualized with the corrplot()-function.
 
@@ -111,6 +111,7 @@ summary(boston_scaled)
 
 boston_scaled <- as.data.frame(boston_scaled)
 ```
+
 I also created the categorical variable crime from the scaled Boston dataset's crim-variable using quantiles as break points and labeling them as "low", "med-low", "med-high" and "high". What is more, I dropped the old crime rate variable from the dataset. For testing the dataset I created a train and test set by setting the train set to contain 80 percent of the data and the rest of the data included in the test set.
 
 
