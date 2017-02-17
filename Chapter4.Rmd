@@ -1,0 +1,301 @@
+---
+title: 'Week 4: Clustering and classification'
+author: "Emma Haapa"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+# Week 4: Clustering and classification {#anchor}
+
+### A look into the data set : The Boston data
+
+The Boston dataset, more formally called "Housing Values in Suburbs of Boston", is a dataset that can be found already installed within the MASS-package in R. The data and its variables can be explored from the tables below, produced by the str() and summary() functions of R. The dimensions   of the Boston data are 506 rows and 14 columns, i. e. 506 observations and 14 variables, the type of which is either numeric or integer. In other words there are no character or factor type variables in this dataset. The names of the variables can be seen below, produced with the colnames()-function.
+
+The data has variables measuring different aspects of housing and living in the city of Boston, including variables such as "rad" described as the index of accessibility to radial highways and "crim" that is the per capita crime rate by town. Of these the latter will be explored further in this week's exercise.
+
+More information regarding the Boston data can be found in this [link](https://stat.ethz.ch/R-manual/R-devel/library/MASS/html/Boston.html).
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+library(MASS)
+
+# load the data
+data("Boston")
+ 
+colnames(Boston)
+
+# explore the dataset
+dim(Boston)
+str(Boston)
+summary(Boston)
+
+```
+
+First, I wanted to see how the crime rate is affected by different variables. To do that, I created boxplots of some of the variables in relation to the crime rate -variable "crim". I am not sure how useful these explorations are, however I decided to engage in them as I thought it would at least be good practice, if not anything else.
+Consequently, I created a new variable "high_crim" by mutating the Boston data and setting high_crim to be true when the crim-variable gets values from (roughly) above the mean (3.6...). The variables I chose are those that in my opinion might have some kind of connection or relationship with the crime rate, the variables being the following:
+
+"lstat"	= lower status of the population (percent).
+"rad"	= index of accessibility to radial highways
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+
+library(gmodels)
+library(gdata)
+library(dplyr) #accessed the dplyr-library
+library(ggplot2) #accessed the ggplot2-library
+library(readr) #accessed the readr-library
+library(tidyr) #accessed tidyr-library
+
+Boston <- mutate(Boston, high_crim = crim > 3.6 )
+
+
+# initialize a plot of high_use and G3
+g6 <- ggplot(Boston, aes(x = high_crim, y = lstat))
+
+# define the plot as a boxplot and draw it
+g6 + geom_boxplot() + ggtitle("Crime rate by lower status of the population (%)")
+
+
+
+# initialize a plot of high_use and G3
+g7 <- ggplot(Boston, aes(x = high_crim, y = rad))
+
+# define the plot as a boxplot and draw it
+g7 + geom_boxplot() + ggtitle("Crime rate by index of accessibility to radial highways")
+```
+
+Judging from the first box plot it seems that when the percent of population classified as lower is higher, the high_crime -variable gets the value TRUE. This essentially means that when there are more "lower class" -people in the neighbourhood or town, also the crime rate is elevated. This confirms to some extent my initial hypothesis of these variables having some kind of connection, and also goes along with the intuition that low-class neighbourhoods would have a higher crime rate than those inhabitated by people of the wealthier upper or mid class. The second box plot shows that higher crime rate is in connection to the access to radial highways, as the high_crime variable gets the value true for high values for the acces-variable. One could think that areas in the midst of or in the crossroads of big highways would have more traffic, more people and more gangs etc. i.e. more criminal activity would take place in that kind of setting. 
+
+To look at the correlation and relationships between all the variables in general, I created plots and correlation matrices with pairs()- and cor()-functions. Below the correlation matrix is also visualized with the corrplot()-function.
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+# plot matrix of the variables
+pairs(Boston)
+ library(tidyverse)
+ library(corrplot)
+# calculate the correlation matrix and round it
+cor_matrix<-cor(Boston)
+
+# print the correlation matrix
+cor_matrix <- cor_matrix%>%round(2)
+cor_matrix
+# visualize the correlation matrix
+corrplot(cor_matrix, method="circle", type = "upper", cl.pos = "b", tl.pos ="d", tl.cex = 0.6)
+
+
+
+```
+
+The picture produced with the pairs()-function is a bit hard to interpret, ut it provides a glimpse onto the relationships between all the variables in the dataset. For a more thorough look at the relationships one could consider the correlation matrix and its very useful visualization. From the aforementioned two we can see that the variable rad of which I created the boxplot with high_crime earlier, has a quite strong positive correlation with crime, the value of it being 0.63. It is depicted in the vizualization with a rather large and opaque, blue dot. So in other words, when the rad-variable increases, so does the crime rate. We can also notice that the lstat-variable has also a somewhat significant (0.46) positive correlation with the crime rate variable, which is shown as a slightly lighter blue dot in the visualization. So high values for lstat mean high values for crim. Also the tax and nox variables (full-value property-tax rate per \$10,000 and nitrogen oxides concentration (parts per 10 million)) have a positive correlation with crime rate, 0.58 and 0.42 respectively. Furthermore, tax rate correlates positively with rad (access to highways) so the more accessible the city/are the more crime it has (over-simplifiedly put). The med variable or the median value of owner-occupied homes in \$1000s on the other hand correlated negatively with lstat, or the lower status of the population, the value being -0.74. Intuitively, this makes sense since lower class population more probably doesn't own high value homes if it owns homes at all. The negative correlation is denoted as red colour in the visualization, and accordingly, the dot between the medv- and lstat-variables is rather big and red.
+
+
+
+According to the instructions, I scaled the Boston dataset and changed the object's class to be data frame. The scaling needs to be done in order to perform Linear Discriminant Analysis on the data, as the assumptions of the analysis are that the variables are normally distributed and have the same variance. In order to ger this result, the scale()-function scales the variables by distracting the mean and dividing the result by standard deviation, resulting in the means of the variables to be exactly equal to zero, as can be seen from the summary. In that way the variables are centered and standardized, i. e. more easily comparable to each other and more calculations can be done based on the relations between the variables as they're measured on the same range.
+
+```{r, echo=TRUE, message=FALSE, warning=FALSE}
+# center and standardize variables
+boston_scaled <- scale(Boston)
+
+# summaries of the scaled variables
+summary(boston_scaled)
+
+# change the object to data frame
+
+boston_scaled <- as.data.frame(boston_scaled)
+```
+I also created the categorical variable crime from the scaled Boston dataset's crim-variable using quantiles as break points and labeling them as "low", "med-low", "med-high" and "high". What is more, I dropped the old crime rate variable from the dataset. For testing the dataset I created a train and test set by setting the train set to contain 80 percent of the data and the rest of the data included in the test set.
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+library(dplyr)
+library(MASS)
+library(corrplot)
+library(tidyverse)
+# boston_scaled is available
+# save the scaled crim as scaled_crim
+scaled_crim <- scale(boston_scaled$crim)
+
+# create a quantile vector of crim and print it
+bins <- quantile(scaled_crim)
+
+# create a categorical variable 'crime'
+crime <- cut(scaled_crim, breaks = bins, include.lowest = TRUE, labels(c("low", "med-low", "med-high", "high")))
+
+# look at the table of the new factor crime
+#table(crime)
+
+# remove original crim from the dataset
+boston_scaled <- dplyr::select(boston_scaled, -crim)
+
+# add the new categorical value to scaled data
+boston_scaled <- data.frame(boston_scaled, crime)
+
+# number of rows in the Boston dataset 
+n <- nrow(boston_scaled)
+
+# choose randomly 80% of the rows
+ind <- sample(n,  size = n * 0.8)
+# create train set
+train <- boston_scaled[ind,]
+# create test set 
+test <- boston_scaled[-ind,]
+
+# save the correct classes from test data
+correct_classes <- test$crime
+
+crime <-as.numeric(as.character(crime))
+
+
+summary(train$crim)
+# remove the crime variable from test data
+test <- dplyr::select(test, -crime)
+
+```
+
+I had a problem with the select-function, and I wasn't sure if I resolved it in the correct way, but I managed to get past it by saving the crime-variable as numeric before using the selct() on it. 
+
+### The Linear Discriminant Analysis (LDA)
+
+Next I engaged in linear discriminant analysis. Despite the initial probles in lda.fit (I had forgot to remove the original crim-variable from the data) I managed to get on with the analysis by fitting the linear discriminant analysis on the train set setting the categorical crime rate as the target variable and all the other variables in the dataset as predictor variables, and consequently drawing th linear bi-plot of the lda.fit.
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+library(MASS)
+# linear discriminant analysis
+lda.fit <- lda(crime ~ . , data = train, na.action = na.exclude)
+
+# print the lda.fit object
+lda.fit
+
+# target classes as numeric
+classes <- as.numeric(train$crime)
+
+
+plot(lda.fit, dimen = 3, col = classes, pch= classes)
+# the function for lda biplot arrows
+lda.arrows <- function(x, myscale = 1, arrow_heads = 0.1, color = "red", tex = 0.75, choices = c(1,2)){
+  heads <- coef(x)
+  arrows(x0 = 0, y0 = 0, 
+         x1 = myscale * heads[,choices[1]], 
+         y1 = myscale * heads[,choices[2]], col=color, length = arrow_heads)
+  text(myscale * heads[,choices], labels = row.names(heads), 
+       cex = tex, col=color, pos=3)
+}
+
+# plot the lda results
+plot(lda.fit, dimen = 2, col  =classes, pch =classes)
+lda.arrows(lda.fit, myscale = 10)
+
+```
+
+
+We can see from the above output that the LD1 Linear discriminant of all the three (n of classes - 1) Linear discriminants explains 0.9861 of the between group variance. In the biplot picture the classes are visualized as the colors of the observations and the predictor variables are pictured as arrows in the middle. The length and direction of the arrows depict the impact of the corresponding predictor variable in the model.
+
+I then predicted the classes using the lda.fit and predict()-function. The cross-tabulation of the results below shows that most of the values are placed on the diagonal, i.e. then the correct value is 1 the prediction also is 1 and so on. However, there are also some in the fringes, in other words the classification is wrong and the prediction is incorrect. For example when the correct value is 1 the prediction is 2 and thus makings the prediction false. All in all, this LDA-model seems to be quite good based on the majority of the predictions being correct.
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+# lda.fit, correct_classes and test are available
+# predict classes with test data
+lda.pred <- predict(lda.fit, newdata = test)
+
+# cross tabulate the results
+table(correct = correct_classes, predicted = lda.pred$class)
+
+```
+ 
+ 
+On the originial Boston dataset, I proceeded to perform a standardization based on the need to get comparable distances. I experimented with this, and decided to take the clusterSim-package into use and use a Normalization approach 2 that I predicted to be good for getting the same distances. I saved the Euclidian distances between the variables into the dist_eu-object and performed the k-means clustering using different numbers of clusters on the data. I concluded, calculating the total within sum of squares and drawing a plot of the result (starting from 1 and ending at the maximal number of clusters = 10), that 2 is the optimal number of clusters, since the plot seemed to go down significantly starting from the number two. The clusters are visualized below by color.
+
+
+```{r, message=FALSE, warning=FALSE, include=FALSE}
+data("Boston")
+library(clusterSim)
+
+ data.Normalization (Boston,type="n1",normalization="column")
+ ?data.Normalization
+
+ 
+ 
+library(MASS)
+
+# euclidean distance matrix
+dist_eu <- dist(Boston)
+
+# k-means clustering
+km <-kmeans(dist_eu, centers = 4)
+km <-kmeans(dist_eu, centers = 6)
+km <-kmeans(dist_eu, centers = 10)
+km <-kmeans(dist_eu, centers = 15)
+# plot the Boston dataset with clusters
+pairs(Boston, col = km$cluster)
+
+library(ggplot2)
+# MASS, ggplot2 and Boston dataset are available
+set.seed(123)
+
+# determine the number of clusters
+k_max <- 10
+```
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+# calculate the total within sum of squares
+twcss <- sapply(1:k_max, function(k){kmeans(dist_eu, k)$tot.withinss})
+
+# visualize the results
+plot(1:k_max, twcss, type='b')
+
+# k-means clustering
+km <-kmeans(dist_eu, centers = 1)
+
+# plot the Boston dataset with clusters
+pairs(Boston, col = km$cluster)
+
+
+
+# k-means clustering
+km <-kmeans(dist_eu, centers = 3)
+
+
+```
+
+From the visualization crated with the pairs()-function on the Boston dataset with the clusters-column defining the colors, 
+Reload the Boston dataset and standardize the dataset (we did not do this in the Datacamp exercises, but you should scale the variables to get comparable distances). Calculate the distances between the observations. Run k-means algorithm on the dataset. Investigate what is the optimal number of clusters and run the algorithm again. Visualize the clusters (for example with the pairs() or ggpairs() functions, where the clusters are separated with colors) and interpret the results. (4 points)
+
+```{r}
+
+library(MASS)
+# linear discriminant analysis
+lda.fit <- lda(km$cluster ~ . , data = Boston)
+
+# print the lda.fit object
+lda.fit
+
+
+# target classes as numeric
+classes <- as.numeric(km$cluster)
+
+
+plot(lda.fit, dimen = 3, col = classes, pch= classes)
+# the function for lda biplot arrows
+lda.arrows <- function(x, myscale = 1, arrow_heads = 0.1, color = "red", tex = 0.75, choices = c(1,2)){
+  heads <- coef(x)
+  arrows(x0 = 0, y0 = 0, 
+         x1 = myscale * heads[,choices[1]], 
+         y1 = myscale * heads[,choices[2]], col=color, length = arrow_heads)
+  text(myscale * heads[,choices], labels = row.names(heads), 
+       cex = tex, col=color, pos=3)
+}
+
+# plot the lda results
+plot(lda.fit, dimen = 2, col  =classes, pch =classes)
+lda.arrows(lda.fit, myscale = 20)
+
+
+
+```
+
