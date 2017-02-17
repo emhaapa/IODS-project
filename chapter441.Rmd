@@ -72,10 +72,30 @@ g7 + geom_boxplot() + ggtitle("Crime rate by index of accessibility to radial hi
 
 ```
 
-
 Judging from the first box plot it seems that when the percent of population classified as lower is higher, the high_crime-variable gets the value TRUE. This essentially means that when there are more "lower class" -people in the neighbourhood or town, also the crime rate is elevated. This confirms tosome extent my initial hypothesis of these variables having some kind of connection, and also goes along with the intuition that low-class neighbourhoods have a higher crime rate than those inhabitated by people of the wealthier upper or mid-class. The second box plot shows that higher crime rate is in connection to the access to radial highways, as the high_crime variable gets the value TRUE for high values of the access to highways -variable. One could think that areas in the midst of or in the crossroads of big highways would have more traffic, more people and more gangs etc., i. e. more criminal activity would take place in that kind of environment.
 
 To look at the correlation and relationships between all the variables in general, I created plots and correlation matrices with pairs()- and cor()-functions. Below the correlation matrix is also visualized with the corrplot()-function.
+
+
+
+```{r Weeek4, echo=FALSE, message=FALSE, warning=FALSE}
+
+# plot matrix of the variables
+pairs(Boston)
+ library(tidyverse)
+ library(corrplot)
+# calculate the correlation matrix and round it
+cor_matrix<-cor(Boston)
+
+# print the correlation matrix
+cor_matrix <- cor_matrix %>% round(2)
+cor_matrix
+# visualize the correlation matrix
+corrplot(cor_matrix, method="circle", type = "upper", cl.pos = "b", tl.pos ="d", tl.cex = 0.6)
+
+
+
+```
 
 
 The picture produced with the pairs()-function is a bit hard to interpret, ut it provides a glimpse onto the relationships between all the variables in the dataset. For a more thorough look at the relationships one could consider the correlation matrix and its very useful visualization. From the aforementioned two we can see that the variable rad of which I created the boxplot with high_crime earlier, has a quite strong positive correlation with crime, the value of it being 0.63. It is depicted in the vizualization with a rather large and opaque, blue dot. So in other words, when the rad-variable increases, so does the crime rate. We can also notice that the lstat-variable has also a somewhat significant (0.46) positive correlation with the crime rate variable, which is shown as a slightly lighter blue dot in the visualization. So high values for lstat mean high values for crim. Also the tax and nox variables (full-value property-tax rate per \$10,000 and nitrogen oxides concentration (parts per 10 million)) have a positive correlation with crime rate, 0.58 and 0.42 respectively. Furthermore, tax rate correlates positively with rad (access to highways) so the more accessible the city/are the more crime it has (over-simplifiedly put). The med variable or the median value of owner-occupied homes in \$1000s on the other hand correlated negatively with lstat, or the lower status of the population, the value being -0.74. Intuitively, this makes sense since lower class population more probably doesn't own high value homes if it owns homes at all. The negative correlation is denoted as red colour in the visualization, and accordingly, the dot between the medv- and lstat-variables is rather big and red.
@@ -176,7 +196,7 @@ Next I engaged in linear discriminant analysis. Despite the initial probles in l
 
 library(MASS)
 # linear discriminant analysis
-lda.fit <- lda(crime ~ . , data = train, na.action = na.exclude)
+lda.fit <- lda(crime ~ . , data = train)
 
 # print the lda.fit object
 lda.fit
