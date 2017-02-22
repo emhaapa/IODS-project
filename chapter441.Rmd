@@ -220,13 +220,12 @@ On the originial Boston dataset, I proceeded to perform a standardization based 
 ```{r Code46, message=FALSE, warning=FALSE, include=FALSE,error=TRUE}
 data("Boston")
 library(clusterSim)
+str(Boston)
 
- data.Normalization (Boston,type="n1",normalization="column")
- ?data.Normalization
+boston_scaled <- as.data.frame(scale(Boston)) # Standardise the data.
+dist_eu <- dist(boston_scaled) # Create an euclidian distance matrix.
+summary(dist_eu) # Summarise the matrix.
 
-
-# euclidean distance matrix
-dist_eu <- dist(Boston)
 
 # k-means clustering
 km <-kmeans(dist_eu, centers = 4)
@@ -235,6 +234,7 @@ km <-kmeans(dist_eu, centers = 10)
 km <-kmeans(dist_eu, centers = 15)
 # plot the Boston dataset with clusters
 pairs(Boston, col = km$cluster)
+
 
 library(ggplot2)
 # MASS, ggplot2 and Boston dataset are available
@@ -251,7 +251,7 @@ twcss <- sapply(1:k_max, function(k){kmeans(dist_eu, k)$tot.withinss})
 plot(1:k_max, twcss, type='b')
 
 # k-means clustering
-km <-kmeans(dist_eu, centers = 1)
+km <-kmeans(dist_eu, centers = 2)
 
 # plot the Boston dataset with clusters
 pairs(Boston, col = km$cluster)
@@ -264,8 +264,9 @@ km <-kmeans(dist_eu, centers = 3)
 
 ```
 
-From the visualization crated with the pairs()-function on the Boston dataset with the clusters-column defining the colors, 
-Reload the Boston dataset and standardize the dataset (we did not do this in the Datacamp exercises, but you should scale the variables to get comparable distances). Calculate the distances between the observations. Run k-means algorithm on the dataset. Investigate what is the optimal number of clusters and run the algorithm again. Visualize the clusters (for example with the pairs() or ggpairs() functions, where the clusters are separated with colors) and interpret the results. (4 points)
+Judging from the above plot matrix, we can conclude that the ovarlap reduces somewhat when using just two clusters as opposed to 4 or for example 8. This approach seems to be the best one at least when using euclidian distance.
+
+
 
 ```{r Code48, echo=FALSE, message=FALSE, warning=FALSE,error=TRUE}
 

@@ -73,3 +73,30 @@ write.csv(human, file = "F:/IODS-project/data/human1.csv") # separator is a comm
 write.csv2(human, file = "F:/IODS-project/data/human.csv") # separator is a semi-colon
 
 dim(human) #195 observations, 19 variables. OK.
+
+library(dplyr)
+library(stringr)
+
+colnames(human)
+# Mutate gni_cap to numeric
+human <- mutate(human, GNIpercapita = as.numeric(str_replace(human$GNIpercapita, pattern=",", replace ="")))
+
+# Get rid of non-needed variables by only selecting those we are interested in.
+human <- select(human, one_of('Country','eduRatioFM','labRatioFM','YrsEduExp','LifeExp','GNIpercapita','MaternalMort','AdolBirth','RepParliament'))
+
+# Use na.omit to get rid of NAs.
+human <- na.omit(human)
+
+# Remove non-countries (last 7)
+human <- head(human, -7)
+
+# Define countries as rownames and remove the country field from the DF.
+rownames(human) <- human$country
+human <- human[,-1]
+glimpse(human) #glimpse at the data
+
+
+# Overwrite the data that was written in the end of Exercise 4.
+write.table(human, file = "human.csv", sep = "\t", col.names = TRUE)
+
+glimpse(human)

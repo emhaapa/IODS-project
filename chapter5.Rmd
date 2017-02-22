@@ -1,0 +1,69 @@
+---
+title: "Chapter 5"
+author: "Emma Haapa"
+date: "22 helmikuuta 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+```{r}
+human <- as.data.frame(read.table('human.csv'))
+
+glimpse(human)
+
+
+
+
+```
+
+Interpreting the above table, the dataset has eight variables and 155 obserations (for 155 countries). The variables included in this dataset are: 
+
+eduRatioFM = Share of female population with secondary education / Share of male population with secondary education
+labRatioFM = Share of female population that participates in labour force / Share of male population that participates in labour force
+YrsEduExp = Expected years of education
+LifeExp = Life expectancy at birth
+GNIpercapita = Gross national income (GNI) per capita (dollars, purchasing power parity)
+MaternalMort = Maternal mortality rate
+AdolBirth = Adolescent birth rate
+RepParliament = Share of female representatives in the national parliament
+
+```{r}
+library(gmodels)
+library(gdata)
+library(dplyr) #accessed the dplyr-library
+library(ggplot2) #accessed the ggplot2-library
+library(readr) #accessed the readr-library
+library(tidyr) #accessed tidyr-library
+library(tidyverse)
+library(corrplot)
+library(GGally)
+
+ggpairs(human)
+```
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+https://github.com/pinjaliina/IODS-project/blob/master/data/create_human.R
+https://pinjaliina.github.io/IODS-project/
+
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

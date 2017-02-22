@@ -29,7 +29,10 @@ output:
 
 ***
 
-```{r child = "chapter441.Rmd",error=TRUE}
+```{r child = "chapter441.Rmd",error=TRUE, cache=TRUE}
 ```
 
+***
+```{r child = "chapter5.Rmd",error=TRUE, cache=TRUE}
+```
 ***

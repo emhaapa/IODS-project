@@ -3,6 +3,10 @@ title: "Week 3: logistic regression"
 author: "Emma Haapa"
 output: html_document
 ---
+To look at the correlation and relationships between all the variables in general, I created plots and correlation matrices with pairs()- and cor()-functions. Below the correlation matrix is also visualized with the corrplot()-function.
+
+
+
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
