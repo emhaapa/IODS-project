@@ -10,9 +10,9 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Week 5: The Human Data {#anchor}
 
-This week's aim was to look at a joined dataset called the "human" data, which was joined from two separate datasets gii and hd in the data wrangling part of the exercise, and conduct a a Principal Component Analysis (PCA) on the data. The original datasets are [Human Development Index (HDI)](http://hdr.undp.org/en/composite/HDI) and [Gender Inequality Index (GII)](http://hdr.undp.org/en/composite/GII) of 2015 of the United Nations, which focus on the different factors associated with human development and gender inequality in different countries. The datasets were joined together using country as the identificating variable and only the observations associated with countries were left in the final dataset leaving out any observations relating to geographical area rather than a specific country. In this process, the variables that were deemed irrelevant with consideration to the following analysis, were excluded, resulting in a dataset that is further explored in the upcoming chapters. During the course of the data wrangling exercise, also two additional variables were coined by calculating a ratio of some of the already existing variables to get more information out of the existing data.
+This week's aim was to look at a joined dataset called the "human" data, which was joined from two separate datasets gii and hd in the data wrangling part of the exercise, and conduct a Principal Component Analysis (PCA) on the data. The original datasets are [Human Development Index (HDI)](http://hdr.undp.org/en/composite/HDI) and [Gender Inequality Index (GII)](http://hdr.undp.org/en/composite/GII) of 2015 of the United Nations, which focus on the different factors associated with human development and gender inequality in different countries. The datasets were joined together using country as the identificating variable and only the observations associated with countries were left in the final dataset leaving out any observations relating to geographical area rather than a specific country. In this process, the variables that were deemed irrelevant with consideration to the following analysis, were excluded, resulting in a dataset that is further explored in the upcoming chapters. During the course of the data wrangling exercise, also two additional variables were coined by calculating a ratio of some of the already existing variables to get more information out of the existing data.
  
-To get an initial peek at the dataset at hand, we use R's glipse()-function. 
+To get an initial peek at the dataset at hand, we use R's glimpse()- and summary()-functions. 
 ```{r week5chunk1, message=FALSE, warning=FALSE}
 library(gmodels)
 library(gdata)
@@ -38,12 +38,19 @@ summary(human)
 Interpreting the above table, the dataset has eight variables and 155 observations (for 155 countries). The variables (renamed by myself in the data wrangling exercise) included in this dataset are: 
 
 eduRatioFM = Share of female population with secondary education / Share of male population with secondary education
+
 labRatioFM = Share of female population that participates in labour force / Share of male population that participates in labour force
+
 YrsEduExp = Expected years of education
+
 LifeExp = Life expectancy at birth
+
 GNIpercapita = Gross national income (GNI) per capita (dollars, purchasing power parity)
+
 MaternalMort = Maternal mortality rate
+
 AdolBirth = Adolescent birth rate
+
 RepParliament = Share of female representatives in the national parliament.
 
 The summary of the dataset informs about the range of the variables, the median, quartiles and minimum and maximum values. By looking at the table it is clear to see that some of the max-values are extremely high compared to the median, which could indicate that there are some outliers or exceptional observations in the data.
@@ -55,7 +62,7 @@ The relationships between the variables in this dataset can be visualized by the
 ggpairs(human)
 ```
 
-From the matrix above, it can be concluded that almost all of the variables' distributions are relatively skewed, i.e. most of the values are in either end of the scale. However, for instance the gender ratio of population with secondary education and expected years in education variables seem to be quite close to being normally distributed, at least they peak in the middle of their range. It can also be noted that there indeed is significant correlation between different variables, going from -0,857 negatie correlation between Maternal mortality and Life expectancy up to 0,789 positive correlation between Life expectancy and Expected years of education. This, in turn, goes well together with the intuition one might have about the relationship between these particular variables: a high maternal mortality rate is in negative correlation with life expectancy, i.e. when maternal mortality increases, life expectancy in turn decreases, and when life expectancy increases, the positive correlation with expected years of education indicates that also the values of the YrsEduExp-variable increase (no causality indicated, of course). Also other values in this chart seem quite remarkable, but the anove table isn't the most auspicious for the full interpretation of them, for which reason it is justifiable to draw a correlation matrix with visually helpful dots indicating the correlation between the variables and colours telling wether the correlation is positive or negative.
+From the matrix above, it can be concluded that almost all of the variables' distributions are relatively skewed, i.e. most of the values are in either end of the scale. However, for instance the gender ratio of population with secondary education and expected years in education variables seem to be quite close to being normally distributed, at least they peak in the middle of their range. It can also be noted that there indeed is significant correlation between different variables, going from -0,857 negative correlation between Maternal mortality and Life expectancy up to 0,789 positive correlation between Life expectancy and Expected years of education. This, in turn, goes well together with the intuition one might have about the relationship between these particular variables: a high maternal mortality rate is in negative correlation with life expectancy, i.e. when maternal mortality increases, life expectancy in turn decreases, and when life expectancy increases, the positive correlation with expected years of education indicates that also the values of the YrsEduExp-variable increase (no causality indicated, of course). Also other values in this chart seem quite remarkable, but the anove table isn't the most auspicious for the full interpretation of them, for which reason it is justifiable to draw a correlation matrix with visually helpful dots indicating the correlation between the variables and colours telling wether the correlation is positive or negative.
 
 ```{r week5chunk3, message=FALSE, warning=FALSE}
 corrplot(round(cor(human), digits = 2), method = "circle", type = "upper", tl.pos = "d", tl.cex = 0.8)
@@ -63,7 +70,7 @@ corrplot(round(cor(human), digits = 2), method = "circle", type = "upper", tl.po
 ```
 
 
-Now that the correlations can be determined by the colours and sizes of the dots in the matrix, it is easier to see which variables are in which kind of correlation with each other. Instantly we see that the aforementioned correlations (expected years of education with life expectancy, and maternal mortality with life expectancy) are the strongest: marked with big dark blue and dark red dots. Looking at this table it is also more clear to see that also maternal mortality and adolescent birth rate are in positive correlation, whereas expected years of education is in negatie correlation with both maternal mortality rate and adolescent birth. Also both expected years in education and life expectancy are in positive correlation with Gross national income per capita, which is quite intuitive.
+Now that the correlations can be determined by the colours and sizes of the dots in the matrix, it is easier to see which variables are in which kind of correlation with each other. Instantly we see that the aforementioned correlations (expected years of education with life expectancy, and maternal mortality with life expectancy) are the strongest: marked with big dark blue and dark red dots. Looking at this table it is also more clear to see that also maternal mortality and adolescent birth rate are in positive correlation, whereas expected years of education is in negative correlation with both maternal mortality rate and adolescent birth. Also both expected years in education and life expectancy are in positive correlation with Gross national income per capita, which is quite intuitive.
 
 ## PCA of the Human data
 
@@ -94,7 +101,7 @@ biplot(pca_human, choices = 1:2, cex = c(0.6, 1), col = c("grey40", "deeppink2")
 
 The picture is not very useful; in addition, there seems to be a problem drawing the arrows (according to the warning messages: "zero-length arrow is of indeterminate angle and so skipped"). Also the labels created from the percentages of variance are quite nonsensical - PC2(0%) and PC1(100%) which is true in this PCA but quite irrational for any kind of analysis. The result is indeed due to the skewed distributions of the variables - almost none of them were close to being normally distributed - so the differing variances led PCA to "think" that those variables with larger variance are also more important.
 
-Because PCA is impacted by the scaling of the features, so, as instructed, it is more than useful to move on to use a different approach. By standardizing the dataset with the scale()-function used last week, we get the result that PCA can interpret more accordingly.
+Because PCA is impacted by the scaling of the features, it is, as instructed, more than useful to move on to use a different approach. By standardizing the dataset with the scale()-function used last week, we get the result that PCA can interpret more accordingly.
 
 ```{r week5chunk6, message=FALSE, warning=FALSE}
 human_st <- scale(human)
@@ -120,7 +127,7 @@ As stated before, the biplot and the summary table indicate much clearer results
 
 Furthermore, we can see from the direction of the arrows, that all of the features except for two (labRatioFM and RepParliament) are contributing to the first PC, hence most of them are pointing along the direction of the PC1-axis (or in the opposite direction but along the line). The angle between a single feature and the PC-axis can be interpreted as the correlation between these two, a small angle indicating strong positive correlation. This is very visual and makes the analysis part interesting: we can see from the plot that nearly all of the variables in connection with PC1 have relatively small angles and thus strong positive connection with PC1. Those ariables contributing to PC2 also have a small angle with the PC2-axis, so the correlation between the PC2 and them is also significantly positive. The arrows which are in a close to 90 degrees angle with either PC1 or PC2 have close to a 0 correlation with these PCs, so indeed for example labRatioFM doesn't correlate with PC1 - which is an element of PCA - the axii are uncorrelated.
 
-What is more, we can also interpret the angle between a gien variable with another as the correlation between the two. It would be useful to draw a correlation matrix now to see how the picture corresponds with the correlation matrix.
+What is more, we can also interpret the angle between a given variable with another as the correlation between the two. It would be useful to draw a correlation matrix now to see how the picture corresponds with the correlation matrix.
 
 ```{r, message=FALSE, warning=FALSE}
 cor_matrix<-cor(human_st)
@@ -187,7 +194,7 @@ plot(mca, invisible=c("ind"), habillage = "quali")
 ```
 
 
-From the summary we can see the percentages of variance by dimension under the eigenvalues-label. The percentage is not very high on the first dimension but it is the one that explains the most of the variability, of course. Then, from the individuals table we can see the values for the ten first individuals, which include the individuals contribution on the dimension (in percents) and the cos2 which is the squared correlation. From the categories part of the table we can see the coordinates of each variable, the cos2 similarly as for individuals and also a v-test value, which tells if the coordinate is significantly different from zero (the v-test follows normal distribution so if the alue is below or above 1,96, the variable differs from zero significantly). The table indicates that almost all of the variables differ from zero.
+From the summary we can see the percentages of variance by dimension under the eigenvalues-label. The percentage is not very high on the first dimension but it is the one that explains the most of the variability, of course. Then, from the individuals table we can see the values for the ten first individuals, which include the individuals contribution on the dimension (in percents) and the cos2 which is the squared correlation. From the categories part of the table we can see the coordinates of each variable, the cos2 similarly as for individuals and also a v-test value, which tells if the coordinate is significantly different from zero (the v-test follows normal distribution so if the value is below or above 1,96, the variable differs from zero significantly). The table indicates that almost all of the variables differ from zero.
 
 In the categorical values a close to one value indicates a strong correlation. The values are co2 values, and we can see that not many of the values have strong correlations, since the values are closer to zero than to 1.
 
