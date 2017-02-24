@@ -1,5 +1,8 @@
-#Emma Haapa, 16.2.2017. This is a file in which I wrangle the week 5 data.
-
+# Emma Haapa, 16.2.2017. 
+# This is a file in which I wrangle the week 5 human data.
+# The data: http://s3.amazonaws.com/assets.datacamp.com/production/course_2218/datasets/human1.txt
+# The unwrangled (separated hd and gii) data can be found in the links in the reading the data
+# part of the last week's exercise below.
 
 library(gmodels)
 library(gdata)
