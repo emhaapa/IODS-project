@@ -1,38 +1,19 @@
 ---
 title: "Chapter 5"
 author: "Emma Haapa"
-date: "22 helmikuuta 2017"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
+```{r setup32week5, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
+# Week 5: The Human Data {#anchor}
 
-```{r}
-human <- as.data.frame(read.table('human.csv'))
-
-glimpse(human)
-
-
-
-
-```
-
-Interpreting the above table, the dataset has eight variables and 155 obserations (for 155 countries). The variables included in this dataset are: 
-
-eduRatioFM = Share of female population with secondary education / Share of male population with secondary education
-labRatioFM = Share of female population that participates in labour force / Share of male population that participates in labour force
-YrsEduExp = Expected years of education
-LifeExp = Life expectancy at birth
-GNIpercapita = Gross national income (GNI) per capita (dollars, purchasing power parity)
-MaternalMort = Maternal mortality rate
-AdolBirth = Adolescent birth rate
-RepParliament = Share of female representatives in the national parliament
-
-```{r}
+This week's aim was to look at a joined dataset called the "human" data, which was joined from two separate datasets gii and hd in the data wrangling part of the exercise, and conduct a a Principal Component Analysis (PCA) on the data. The original datasets are [Human Development Index (HDI)](http://hdr.undp.org/en/composite/HDI) and [Gender Inequality Index (GII)](http://hdr.undp.org/en/composite/GII) of 2015 of the United Nations, which focus on the different factors associated with human development and gender inequality in different countries. The datasets were joined together using country as the identificating variable and only the observations associated with countries were left in the final dataset leaving out any observations relating to geographical area rather than a specific country. In this process, the variables that were deemed irrelevant with consideration to the following analysis, were excluded, resulting in a dataset that is further explored in the upcoming chapters. During the course of the data wrangling exercise, also two additional variables were coined by calculating a ratio of some of the already existing variables to get more information out of the existing data.
+ 
+To get an initial peek at the dataset at hand, we use R's glipse()-function. 
+```{r week5chunk1, message=FALSE, warning=FALSE}
 library(gmodels)
 library(gdata)
 library(dplyr) #accessed the dplyr-library
@@ -42,28 +23,174 @@ library(tidyr) #accessed tidyr-library
 library(tidyverse)
 library(corrplot)
 library(GGally)
+library(stringr)
+
+human <- as.data.frame(read.table('human.csv'), sep="\t", header=TRUE)
+
+glimpse(human)
+summary(human)
+
+
+
+
+```
+
+Interpreting the above table, the dataset has eight variables and 155 observations (for 155 countries). The variables (renamed by myself in the data wrangling exercise) included in this dataset are: 
+
+eduRatioFM = Share of female population with secondary education / Share of male population with secondary education
+labRatioFM = Share of female population that participates in labour force / Share of male population that participates in labour force
+YrsEduExp = Expected years of education
+LifeExp = Life expectancy at birth
+GNIpercapita = Gross national income (GNI) per capita (dollars, purchasing power parity)
+MaternalMort = Maternal mortality rate
+AdolBirth = Adolescent birth rate
+RepParliament = Share of female representatives in the national parliament.
+
+The summary of the dataset informs about the range of the variables, the median, quartiles and minimum and maximum values. By looking at the table it is clear to see that some of the max-values are extremely high compared to the median, which could indicate that there are some outliers or exceptional observations in the data.
+
+The relationships between the variables in this dataset can be visualized by the ggpairs()-function, which demonstrates the scatter plots and correlation factors of the variables:
+
+```{r week5chunk2, message=FALSE, warning=FALSE}
 
 ggpairs(human)
 ```
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+From the matrix above, it can be concluded that almost all of the variables' distributions are relatively skewed, i.e. most of the values are in either end of the scale. However, for instance the gender ratio of population with secondary education and expected years in education variables seem to be quite close to being normally distributed, at least they peak in the middle of their range. It can also be noted that there indeed is significant correlation between different variables, going from -0,857 negatie correlation between Maternal mortality and Life expectancy up to 0,789 positive correlation between Life expectancy and Expected years of education. This, in turn, goes well together with the intuition one might have about the relationship between these particular variables: a high maternal mortality rate is in negative correlation with life expectancy, i.e. when maternal mortality increases, life expectancy in turn decreases, and when life expectancy increases, the positive correlation with expected years of education indicates that also the values of the YrsEduExp-variable increase (no causality indicated, of course). Also other values in this chart seem quite remarkable, but the anove table isn't the most auspicious for the full interpretation of them, for which reason it is justifiable to draw a correlation matrix with visually helpful dots indicating the correlation between the variables and colours telling wether the correlation is positive or negative.
 
-https://github.com/pinjaliina/IODS-project/blob/master/data/create_human.R
-https://pinjaliina.github.io/IODS-project/
+```{r week5chunk3, message=FALSE, warning=FALSE}
+corrplot(round(cor(human), digits = 2), method = "circle", type = "upper", tl.pos = "d", tl.cex = 0.8)
 
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
 ```
 
-## Including Plots
 
-You can also embed plots, for example:
+Now that the correlations can be determined by the colours and sizes of the dots in the matrix, it is easier to see which variables are in which kind of correlation with each other. Instantly we see that the aforementioned correlations (expected years of education with life expectancy, and maternal mortality with life expectancy) are the strongest: marked with big dark blue and dark red dots. Looking at this table it is also more clear to see that also maternal mortality and adolescent birth rate are in positive correlation, whereas expected years of education is in negatie correlation with both maternal mortality rate and adolescent birth. Also both expected years in education and life expectancy are in positive correlation with Gross national income per capita, which is quite intuitive.
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+## PCA of the Human data
+
+A Principal Component Analysis (abbreviated as PCA) can be conducted on the dataset to lower its dimensionality using the singular value decomposition (SVD) method. The SVD literally decomposes a matrix and produces a product of smaller matrices, which brings out the most important components, and in statistics, PCA aims to do exactly that. It represents the data at hand in two dimensions with respect to Principal components - the components which explain different proportions of variance of the original variables, or in other words, features. The first Principal component always explains the largest proportion of variance along the features, and the importance of the PC is relative to the order in which it is represented in the PCA: for example, PC2 explains the second largest proportion of variance and PC3 the third largest and so on. Usually only two principal components explain the most significant amount of variance, hece the two-dimensionality of the PCA and the resulting biplot (bi = two) with arrows representing the correlation between the variables with each other and with the two PCs. Consequently, the Principal components are also uncorrelated, which means that the angle between them is 90 degrees (which corresponds to a 0 correlation).
+
+According to instructions, the PCA is first done on the non-standardised dataset for learning purposes - we know it would be essential to standardize the dataset before attempting PCA on it, but it is useful to see the results if we do not do so. First we create a pca_human -object into which we save the PCA with prcomp()-function and then print the summary (s_nonst) of it.
+
+```{r week5chunk4, message=FALSE, warning=FALSE}
+
+pca_human <- prcomp(human)
+s_nonst <- summary(pca_human)
+s_nonst
+
+
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+The problem with this initial approach without standardization is, as shown in the summary, that PC1 which is the first Principal Component, explains nearly all of the variance in contrast to the other PCs with significantly lower - essentially zero - proportions of variance. The plot of the precluding analysis is a bit strange and further indicates there is a problem with this approach:
+
+
+```{r week5chunk5, error=TRUE, message=FALSE, fig.height=10.7, fig.width=19}
+
+pr_snonst <- round(100*s_nonst$importance[2, ], digits = 1)
+pc_snonst_lab <- paste0(names(pr_snonst), " (", pr_snonst, "%)")
+biplot(pca_human, choices = 1:2, cex = c(0.6, 1), col = c("grey40", "deeppink2"), xlab = pc_snonst_lab[1], ylab = pc_snonst_lab[2])
+
+```
+
+
+The picture is not very useful; in addition, there seems to be a problem drawing the arrows (according to the warning messages: "zero-length arrow is of indeterminate angle and so skipped"). Also the labels created from the percentages of variance are quite nonsensical - PC2(0%) and PC1(100%) which is true in this PCA but quite irrational for any kind of analysis. The result is indeed due to the skewed distributions of the variables - almost none of them were close to being normally distributed - so the differing variances led PCA to "think" that those variables with larger variance are also more important.
+
+Because PCA is impacted by the scaling of the features, so, as instructed, it is more than useful to move on to use a different approach. By standardizing the dataset with the scale()-function used last week, we get the result that PCA can interpret more accordingly.
+
+```{r week5chunk6, message=FALSE, warning=FALSE}
+human_st <- scale(human)
+pca_st <- prcomp(human_st)
+s_st <- summary(pca_st)
+s_st
+```
+
+As we can see from the row of Proportion of Variance, the results differ from the previous approach quite significantly. Now each of the PCAs explains some proportion of the variance - the first, PC1, having the largest proportion of variance in this case, too - and none of the PCs get a zero proportion. The rationality of this approach can be seen more efficiently by drawing the picture:
+
+```{r week5chunk7, message=FALSE, warning=FALSE, fig.height=10.7, fig.width=19}
+pr_sst <- round(100*s_st$importance[2, ], digits = 1)
+pc_sst_lab <- paste0(names(pr_sst), " (", pr_sst, "%)")
+biplot(pca_st, choices = 1:2, cex = c(0.6, 1), col = c("grey40", "deeppink2"), xlab = pc_sst_lab[1], ylab = pc_sst_lab[2])
+
+```
+
+The proportions of variance as labels make more sense now, and there are no warnings regarding the drawing of the arrows. Also the picture looks clearer, the arrows are headed to different directions and the result seems interesting enough for some analysis to be executed.
+
+## The analysis of the PCA
+
+As stated before, the biplot and the summary table indicate much clearer results now. It seems that the first principal component explains a proportion of 53.6% of the total variance of the total of eight variables whereas the second principal component explains 16.2% of all the variance.
+
+Furthermore, we can see from the direction of the arrows, that all of the features except for two (labRatioFM and RepParliament) are contributing to the first PC, hence most of them are pointing along the direction of the PC1-axis (or in the opposite direction but along the line). The angle between a single feature and the PC-axis can be interpreted as the correlation between these two, a small angle indicating strong positive correlation. This is very visual and makes the analysis part interesting: we can see from the plot that nearly all of the variables in connection with PC1 have relatively small angles and thus strong positive connection with PC1. Those ariables contributing to PC2 also have a small angle with the PC2-axis, so the correlation between the PC2 and them is also significantly positive. The arrows which are in a close to 90 degrees angle with either PC1 or PC2 have close to a 0 correlation with these PCs, so indeed for example labRatioFM doesn't correlate with PC1 - which is an element of PCA - the axii are uncorrelated.
+
+What is more, we can also interpret the angle between a gien variable with another as the correlation between the two. It would be useful to draw a correlation matrix now to see how the picture corresponds with the correlation matrix.
+
+```{r, message=FALSE, warning=FALSE}
+cor_matrix<-cor(human_st)
+
+# print the correlation matrix
+cor_matrix <- cor_matrix%>%round(2)
+cor_matrix
+
+```
+
+From the correlation matrix above and the biplot printed earlier, we can indeed see that the correlations between the variables are shown in the biplot. For example, the correlation between maternal mortality and adolescent birth is strongly positie, 0,76 as read from the correlation matrix, and from the biplot we can see that in between the arrows there is only a small angle. As opposed to for example expected years of education and maternal morality, which have a strong negative correlation, that of -0,74, the biplot also indicates that the corresponding arrows point to the opposite directions. 
+
+The biplot also shows, which kind of features contribute to PC1 and PC2. The variables in relation to PC1 are mostly variables that describe wealth - or lack thereof - for example, the GNIpercapita, maternal mortality etc. They have less to do with gender inequality or equality, than those contributing to PC2 (labRatioFM and RepParliament, which have to do with gender representation and participation in Labour movement and Parliament, the first being ratio of female participation in the labour force and the latter being the proportion of female MPs represented in the Parliament). We could conclude that PC1 is a poverty-component, which explains the most variance, whereas PC2 has to do with equality values and explains only some of the total variance, and the correlation between these two is nonexistent (zero). The equality is affected by two main components already mentioned, and the poverty component or PC1 is impacted by maternal mortality and adolescent birth in an increasing manner, and for example expected years in education, GNI per capita and life expectancy in a decreasing manner. This is also very intuitive, however a very over-simplifying interpretation and I'm not sure whether it has any grounds, but it is nice to play with ideas. 
+
+
+# The Tea data
+
+The final part of the instructions was to conduct a Multiple Correspondence Analysis (MCA) for [the Tea dataset already installed in the FactoMineR library in R](https://cran.r-project.org/web/packages/FactoMineR/FactoMineR.pdf). It is described as concerning a questionnaire on tea, where 300 individuals were asked about their tea drinking habits, product's perception and personal details with the total of 34 questions. It is also stated in the description that Tea is a "data frame with 300 rows and 36 columns. Rows represent the individuals, columns represent the
+different questions. The first 18 questions are active ones, the 19th is a supplementary quantitative
+variable (the age) and the last variables are supplementary categorical variables". Let's look at the data:
+
+```{r, message=FALSE, warning=FALSE}
+library(FactoMineR)
+
+data("tea")
+glimpse(tea)
+```
+
+First off, we can see the dimensions of the data: as mentioned before, the data has 300 observations and 36 variables. What we can also see, is that all of the variables (age excluded) are factor-type, categorical variables (most even binary), which drives us towards MCA rather than PCA. 
+
+I decided to keep the variables spirituality, tearoom, sophisticated, sugar, healthy, slimming, to see how similar the associations about tea are and which go hand in hand just for fun. The variables describe the kind of images the respondents have about tea, whether they associate tea drinking with spirituality or not, whether they go to special tea rooms or not, whether they consider tea drinking sophisticated, do they drink their tea with sugar and do they consider tea drinking healthy and slimming or not. First I excluded all other variables from the dataset and was left with only six remaining variables, a dataset I called "tea_associations".
+
+```{r}
+keep_columns <- c("spirituality", "tearoom", "sophisticated", "sugar", "healthy", "slimming")
+
+# select the 'keep_columns' to create a new dataset
+tea_associations <- dplyr::select(tea, one_of(keep_columns))
+
+# look at the summaries and structure of the data
+summary(tea_associations)
+str(tea_associations)
+
+# visualize the dataset
+gather(tea_associations) %>% ggplot(aes(value)) + facet_wrap("key", scales = "free") + geom_bar() + theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 8))
+
+```
+
+The barplots of the variables can be viewed from above. They indicate that the majority of drinkers consider tea to be healthy vs not healthy and that the slimming option in the questionnaire was less popular than not slimming. Moreover, tea was more often considered sophisticated than not, and less often associated with spirituality than not. The sugar addition was relatively evenly distributed, as opposed to the tearoom/ not tearoom distribution: most respondents chose the not tearoom option.
+
+Next, let's look at the Multiple Correspondence Analysis of tea_associations.
+
+
+
+```{r, message=FALSE, warning=FALSE}
+# multiple correspondence analysis
+mca <- MCA(tea_associations, graph = FALSE)
+
+# summary of the model
+
+summary(mca)
+# visualize MCA
+plot(mca, invisible=c("var"))
+plot(mca, invisible=c("ind"), habillage = "quali")
+```
+
+
+From the summary we can see the percentages of variance by dimension under the eigenvalues-label. The percentage is not very high on the first dimension but it is the one that explains the most of the variability, of course. Then, from the individuals table we can see the values for the ten first individuals, which include the individuals contribution on the dimension (in percents) and the cos2 which is the squared correlation. From the categories part of the table we can see the coordinates of each variable, the cos2 similarly as for individuals and also a v-test value, which tells if the coordinate is significantly different from zero (the v-test follows normal distribution so if the alue is below or above 1,96, the variable differs from zero significantly). The table indicates that almost all of the variables differ from zero.
+
+In the categorical values a close to one value indicates a strong correlation. The values are co2 values, and we can see that not many of the values have strong correlations, since the values are closer to zero than to 1.
+
+The individuals plot doesn't tell us much; it just shows the individuals' distribution on the Dimensions map. The variable map is much more interesting. From it we can read that for example spirituality and sophisticated, and in turn, no sugar and healthy are within a small distance of each other, which tells us there is a connection or correlation between the pairs, whereas the opposing values are on the other end and not so close to each other. Slimming and not healthy are outside of all the values, which indicates they do not have a connection with the other variables and are different than all the other ones. Also tearoom could be included in this group. 
+
+

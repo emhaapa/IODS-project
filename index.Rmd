@@ -5,12 +5,13 @@ output:
   html_document:
     theme: sandstone
     toc: TRUE
-    toc_depth: 2
+    toc_depth: 3
     fig_caption: TRUE
     fig_width: 6
     fig_height: 4
     code_folding: hide
 ---
+
 
 ***
   

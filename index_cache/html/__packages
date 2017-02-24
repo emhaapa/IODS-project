@@ -7,3 +7,13 @@ tidyr
 gmodels
 gdata
 boot
+MASS
+tidyverse
+tibble
+purrr
+corrplot
+plyr
+cluster
+clusterSim
+stringr
+FactoMineR
