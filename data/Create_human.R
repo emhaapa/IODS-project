@@ -78,25 +78,29 @@ library(dplyr)
 library(stringr)
 
 colnames(human)
-# Mutate gni_cap to numeric
+# Mutating GNIpercapita to numeric using mutate()
 human <- mutate(human, GNIpercapita = as.numeric(str_replace(human$GNIpercapita, pattern=",", replace ="")))
 
-# Get rid of non-needed variables by only selecting those we are interested in.
+# Getting rid of non-needed variables by only selecting those we are interested in.
 human <- select(human, one_of('Country','eduRatioFM','labRatioFM','YrsEduExp','LifeExp','GNIpercapita','MaternalMort','AdolBirth','RepParliament'))
 
-# Use na.omit to get rid of NAs.
+# Using na.omit to get rid of NAs (could have done it by using
+# complete.cases in a similar way as in DataCamp but I found that
+# this approach also worked [one could argue which is the more
+# teaching of the approaches...])
 human <- na.omit(human)
 
 # Remove non-countries (last 7)
 human <- head(human, -7)
 
-# Define countries as rownames and remove the country field from the DF.
+# Defining countries as rownames
 rownames(human) <- human$country
-human <- human[,-1]
-glimpse(human) #glimpse at the data
+human <- human[,-1] # Removing country name column from the data.
+glimpse(human) # Having a glimpse at the data,
 
 
-# Overwrite the data that was written in the end of Exercise 4.
+# Overwriting the human dataset by using wirte.table.
 write.table(human, file = "human.csv", sep = "\t", col.names = TRUE)
 
-glimpse(human)
+glimpse(human) # A final glimpse to see whether the variable/observation
+# is correct. It is. The dimensions are 155 observations and 8 variables.
